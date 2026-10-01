@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+<title>WANS HT Simulator</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+    background:#080a0b;
+    font-family:Arial,sans-serif;
+    color:#fff;
+}
+
+body{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.ht{
+    width:min(430px,100%);
+    min-height:100vh;
+    padding:14px;
+    background:
+        radial-gradient(circle at 50% 20%,#263238 0,#101417 35%,#070909 75%);
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    text-align:center;
+    padding:12px;
+    border:2px solid #303b3f;
+    border-radius:16px;
+    background:#101518;
+    box-shadow:0 5px 20px #000;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    letter-spacing:4px;
+    color:#00e5ff;
+}
+
+.sub{
+    margin-top:4px;
+    font-size:11px;
+    color:#78909c;
+    letter-spacing:2px;
+}
+
+/* ================= RADIO DISPLAY ================= */
+
+.radio{
+    margin-top:14px;
+    padding:15px;
+    border-radius:15px;
+    border:3px solid #263238;
+    background:#050707;
+    box-shadow:
+        inset 0 0 25px #000,
+        0 5px 15px #000;
+}
+
+.screen{
+    border:2px solid #37474f;
+    border-radius:9px;
+    padding:12px;
+    background:#07100b;
+    box-shadow:inset 0 0 15px #000;
+}
+
+.topline{
+    display:flex;
+    justify-content:space-between;
+    color:#69f0ae;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.freq{
+    margin-top:5px;
+    text-align:center;
+    font-family:monospace;
+    font-size:37px;
+    font-weight:bold;
+    color:#76ff03;
+    letter-spacing:1px;
+    text-shadow:0 0 8px #1b5e20;
+}
+
+.mode{
+    display:flex;
+    justify-content:space-between;
+    margin-top:7px;
+    color:#69f0ae;
+    font-family:monospace;
+    font-size:12px;
+}
+
+.txrx{
+    text-align:center;
+    min-height:18px;
+    margin-top:6px;
+    color:#ff5252;
+    font-weight:bold;
+    font-family:monospace;
+}
+
+.signal{
+    display:flex;
+    gap:3px;
+    margin-top:7px;
+    height:9px;
+}
+
+.signal span{
+    flex:1;
+    background:#263238;
+    border-radius:2px;
+}
+
+.signal span.on{
+    background:#76ff03;
+}
+
+/* ================= CHANNEL ================= */
+
+.channelButtons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+    margin-top:12px;
+}
+
+button{
+    border:0;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.smallBtn{
+    padding:13px 8px;
+    border-radius:10px;
+    background:#263238;
+    border:1px solid #455a64;
+}
+
+.smallBtn:active{
+    transform:scale(.97);
+    background:#37474f;
+}
+
+/* ================= PTT ================= */
+
+.pttArea{
+    text-align:center;
+    margin-top:15px;
+}
+
+.ptt{
+    width:215px;
+    height:215px;
+    border-radius:50%;
+    background:
+        radial-gradient(circle at 40% 30%,#ef5350,#c62828 55%,#7f0000);
+    border:10px solid #263238;
+    box-shadow:
+        0 12px 25px #000,
+        inset 0 5px 10px #ff8a80,
+        inset 0 -10px 15px #4a0000;
+    font-size:31px;
+    letter-spacing:2px;
+    user-select:none;
+    touch-action:none;
+}
+
+.ptt:active,
+.ptt.tx{
+    transform:scale(.96);
+    background:
+        radial-gradient(circle,#ff5252,#d50000 60%,#7f0000);
+    box-shadow:
+        0 3px 10px #000,
+        0 0 30px #f00,
+        inset 0 0 25px #ff8a80;
+}
+
+.hint{
+    margin-top:8px;
+    color:#90a4ae;
+    font-size:12px;
+}
+
+/* ================= CONTROLS ================= */
+
+.panel{
+    margin-top:14px;
+    padding:12px;
+    border:1px solid #263238;
+    border-radius:12px;
+    background:#0d1215;
+}
+
+.title{
+    color:#00e5ff;
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:1px;
+    margin-bottom:9px;
+}
+
+.row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+}
+
+.toggle{
+    padding:12px;
+    border-radius:9px;
+    background:#263238;
+}
+
+.toggle.active{
+    background:#006064;
+}
+
+input[type=range]{
+    width:100%;
+}
+
+.info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:9px;
+}
+
+.infoBox{
+    padding:10px;
+    border-radius:8px;
+    background:#11191d;
+    border:1px solid #263238;
+    text-align:center;
+}
+
+.infoBox b{
+    display:block;
+    color:#00e5ff;
+    margin-bottom:3px;
+}
+
+.status{
+    text-align:center;
+    margin-top:12px;
+    color:#78909c;
+    font-size:11px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="ht">
+
+    <div class="header">
+        <div class="logo">WANS HT</div>
+        <div class="sub">OFFLINE RADIO SIMULATOR</div>
+    </div>
+
+    <div class="radio">
+
+        <div class="screen">
+
+            <div class="topline">
+                <span id="channel">CH-01</span>
+                <span id="battery">BAT 100%</span>
+            </div>
+
+            <div class="freq" id="freq">
+                433.500
+            </div>
+
+            <div class="mode">
+                <span>FM</span>
+                <span id="band">MHz</span>
+                <span>SQL 05</span>
+            </div>
+
+            <div class="txrx" id="txrx">
+                STANDBY
+            </div>
+
+            <div class="signal" id="signal">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+        </div>
+
+        <div class="channelButtons">
+
+            <button class="smallBtn"
+                    onclick="previousChannel()">
+                ◀ CH -
+            </button>
+
+            <button class="smallBtn"
+                    onclick="nextChannel()">
+                CH + ▶
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- PTT -->
+
+    <div class="pttArea">
+
+        <button class="ptt" id="ptt">
+            PTT
+        </button>
+
+        <div class="hint">
+            TEKAN & TAHAN UNTUK TRANSMIT
+        </div>
+
+    </div>
+
+
+    <!-- AUDIO -->
+
+    <div class="panel">
+
+        <div class="title">
+            AUDIO RADIO
+        </div>
+
+        <div class="row">
+
+            <button
+                class="toggle"
+                id="soundBtn"
+                onclick="toggleSound()">
+                🔊 SOUND ON
+            </button>
+
+            <button
+                class="toggle"
+                onclick="testRadio()">
+                📻 TEST RADIO
+            </button>
+
+        </div>
+
+        <div style="margin-top:10px">
+            Volume
+            <input
+                id="volume"
+                type="range"
+                min="0"
+                max="100"
+                value="70">
+        </div>
+
+    </div>
+
+
+    <!-- INFORMASI -->
+
+    <div class="panel">
+
+        <div class="title">
+            RADIO INFO
+        </div>
+
+        <div class="info">
+
+            <div class="infoBox">
+                <b>FREQUENCY</b>
+                <span id="infoFreq">
+                    433.500 MHz
+                </span>
+            </div>
+
+            <div class="infoBox">
+                <b>CHANNEL</b>
+                <span id="infoChannel">
+                    CH 01
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="status" id="status">
+        WANS HT READY • OFFLINE
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   WANS HT SIMULATOR
+   AUDIO DIBUAT LANGSUNG DENGAN WEB AUDIO API
+===================================================== */
+
+let audioCtx = null;
+let masterGain = null;
+let noiseNode = null;
+
+let soundEnabled = true;
+let transmitting = false;
+
+let currentChannel = 1;
+
+
+/* =====================================================
+   CHANNEL FREQUENCY
+===================================================== */
+
+const channels = [
+    433.500,
+    433.525,
+    433.550,
+    433.575,
+    433.600,
+    433.625,
+    433.650,
+    433.675,
+    433.700,
+    433.725,
+    433.750,
+    433.775,
+    433.800,
+    433.825,
+    433.850,
+    433.875
+];
+
+
+/* =====================================================
+   AUDIO INIT
+===================================================== */
+
+function initAudio(){
+
+    if(audioCtx)
+        return;
+
+    audioCtx =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+    masterGain =
+        audioCtx.createGain();
+
+    masterGain.gain.value =
+        getVolume();
+
+    masterGain.connect(
+        audioCtx.destination
+    );
+
+}
+
+
+/* =====================================================
+   VOLUME
+===================================================== */
+
+function getVolume(){
+
+    return (
+        Number(
+            document.getElementById("volume").value
+        ) / 100
+    );
+
+}
+
+document.getElementById("volume")
+.addEventListener("input",function(){
+
+    if(masterGain)
+        masterGain.gain.value =
+            getVolume();
+
+});
+
+
+/* =====================================================
+   BEEP
+===================================================== */
+
+function beep(
+    frequency=1000,
+    duration=0.08,
+    type="square",
+    volume=0.25
+){
+
+    if(!soundEnabled)
+        return;
+
+    initAudio();
+
+    if(audioCtx.state === "suspended")
+        audioCtx.resume();
+
+    const osc =
+        audioCtx.createOscillator();
+
+    const gain =
+        audioCtx.createGain();
+
+    osc.type = type;
+
+    osc.frequency.value =
+        frequency;
+
+    gain.gain.setValueAtTime(
+        0,
+        audioCtx.currentTime
+    );
+
+    gain.gain.linearRampToValueAtTime(
+        volume,
+        audioCtx.currentTime + 0.005
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioCtx.currentTime + duration
+    );
+
+    osc.connect(gain);
+    gain.connect(masterGain);
+
+    osc.start();
+
+    osc.stop(
+        audioCtx.currentTime + duration + 0.01
+    );
+
+}
+
+
+/* =====================================================
+   DOUBLE BEEP
+===================================================== */
+
+function doubleBeep(){
+
+    beep(
+        1200,
+        0.07,
+        "square",
+        0.25
+    );
+
+    setTimeout(function(){
+
+        beep(
+            1600,
+            0.08,
+            "square",
+            0.22
+        );
+
+    },90);
+
+}
+
+
+/* =====================================================
+   STATIC / NOISE
+===================================================== */
+
+function staticNoise(duration=0.4){
+
+    if(!soundEnabled)
+        return;
+
+    initAudio();
+
+    const bufferSize =
+        audioCtx.sampleRate * duration;
+
+    const buffer =
+        audioCtx.createBuffer(
+            1,
+            bufferSize,
+            audioCtx.sampleRate
+        );
+
+    const data =
+        buffer.getChannelData(0);
+
+    for(
+        let i=0;
+        i<bufferSize;
+        i++
+    ){
+
+        data[i] =
+            (Math.random()*2-1);
+
+    }
+
+    const source =
+        audioCtx.createBufferSource();
+
+    const gain =
+        audioCtx.createGain();
+
+    source.buffer = buffer;
+
+    gain.gain.value =
+        0.10;
+
+    source.connect(gain);
+    gain.connect(masterGain);
+
+    source.start();
+
+}
+
+
+/* =====================================================
+   RADIO SQUELCH
+===================================================== */
+
+function squelch(){
+
+    if(!soundEnabled)
+        return;
+
+    staticNoise(0.18);
+
+    setTimeout(function(){
+
+        beep(
+            850,
+            0.045,
+            "square",
+            0.15
+        );
+
+    },100);
+
+}
+
+
+/* =====================================================
+   TX START
+===================================================== */
+
+function startTX(){
+
+    if(transmitting)
+        return;
+
+    transmitting = true;
+
+    initAudio();
+
+    document
+        .getElementById("ptt")
+        .classList.add("tx");
+
+    document
+        .getElementById("txrx")
+        .textContent = "TX";
+
+    document
+        .getElementById("txrx")
+        .style.color = "#ff1744";
+
+    document
+        .getElementById("status")
+        .textContent =
+        "🔴 TRANSMIT • RADIO AKTIF";
+
+    /* Suara klik/beep HT */
+
+    beep(
+        700,
+        0.055,
+        "square",
+        0.25
+    );
+
+    setTimeout(function(){
+
+        beep(
+            1200,
+            0.045,
+            "square",
+            0.18
+        );
+
+    },60);
+
+    /* simulasi carrier radio */
+
+    startCarrier();
+
+}
+
+
+/* =====================================================
+   TX STOP
+===================================================== */
+
+function stopTX(){
+
+    if(!transmitting)
+        return;
+
+    transmitting = false;
+
+    stopCarrier();
+
+    document
+        .getElementById("ptt")
+        .classList.remove("tx");
+
+    document
+        .getElementById("txrx")
+        .textContent = "STANDBY";
+
+    document
+        .getElementById("txrx")
+        .style.color = "#69f0ae";
+
+    document
+        .getElementById("status")
+        .textContent =
+        "WANS HT READY • OFFLINE";
+
+    /* beep roger */
+
+    setTimeout(function(){
+
+        beep(
+            1100,
+            0.055,
+            "square",
+            0.20
+        );
+
+        setTimeout(function(){
+
+            beep(
+                750,
+                0.08,
+                "square",
+                0.18
+            );
+
+        },65);
+
+    },20);
+
+}
+
+
+/* =====================================================
+   CARRIER
+===================================================== */
+
+let carrierOsc = null;
+let carrierGain = null;
+
+function startCarrier(){
+
+    if(!soundEnabled)
+        return;
+
+    initAudio();
+
+    carrierOsc =
+        audioCtx.createOscillator();
+
+    carrierGain =
+        audioCtx.createGain();
+
+    carrierOsc.type = "sine";
+
+    carrierOsc.frequency.value =
+        95;
+
+    carrierGain.gain.value =
+        0.018;
+
+    carrierOsc.connect(
+        carrierGain
+    );
+
+    carrierGain.connect(
+        masterGain
+    );
+
+    carrierOsc.start();
+
+}
+
+
+function stopCarrier(){
+
+    if(carrierOsc){
+
+        try{
+            carrierOsc.stop();
+        }catch(e){}
+
+        carrierOsc =
+            null;
+
+    }
+
+    carrierGain =
+        null;
+
+}
+
+
+/* =====================================================
+   PTT EVENTS
+===================================================== */
+
+const ptt =
+    document.getElementById("ptt");
+
+
+ptt.addEventListener(
+    "pointerdown",
+    function(e){
+
+        e.preventDefault();
+
+        startTX();
+
+    }
+);
+
+
+ptt.addEventListener(
+    "pointerup",
+    function(e){
+
+        e.preventDefault();
+
+        stopTX();
+
+    }
+);
+
+
+ptt.addEventListener(
+    "pointercancel",
+    stopTX
+);
+
+
+ptt.addEventListener(
+    "pointerleave",
+    function(e){
+
+        if(transmitting)
+            stopTX();
+
+    }
+);
+
+
+/* =====================================================
+   CHANNEL
+===================================================== */
+
+function updateChannel(){
+
+    const freq =
+        channels[currentChannel-1];
+
+    document
+        .getElementById("channel")
+        .textContent =
+        "CH-" +
+        String(currentChannel)
+        .padStart(2,"0");
+
+    document
+        .getElementById("freq")
+        .textContent =
+        freq.toFixed(3);
+
+    document
+        .getElementById("infoFreq")
+        .textContent =
+        freq.toFixed(3) +
+        " MHz";
+
+    document
+        .getElementById("infoChannel")
+        .textContent =
+        "CH " +
+        String(currentChannel)
+        .padStart(2,"0");
+
+    randomSignal();
+
+}
+
+
+function nextChannel(){
+
+    initAudio();
+
+    currentChannel++;
+
+    if(
+        currentChannel >
+        channels.length
+    )
+        currentChannel = 1;
+
+    beep(
+        900,
+        0.04,
+        "square",
+        0.15
+    );
+
+    updateChannel();
+
+}
+
+
+function previousChannel(){
+
+    initAudio();
+
+    currentChannel--;
+
+    if(currentChannel < 1)
+        currentChannel =
+            channels.length;
+
+    beep(
+        650,
+        0.04,
+        "square",
+        0.15
+    );
+
+    updateChannel();
+
+}
+
+
+/* =====================================================
+   SIGNAL METER
+===================================================== */
+
+function randomSignal(){
+
+    const bars =
+        document
+        .getElementById("signal")
+        .children;
+
+    const level =
+        Math.floor(
+            Math.random()*6
+        ) + 2;
+
+    for(
+        let i=0;
+        i<bars.length;
+        i++
+    ){
+
+        bars[i]
+        .classList
+        .toggle(
+            "on",
+            i < level
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SOUND ON/OFF
+===================================================== */
+
+function toggleSound(){
+
+    soundEnabled =
+        !soundEnabled;
+
+    const btn =
+        document
+        .getElementById("soundBtn");
+
+    if(soundEnabled){
+
+        btn.textContent =
+            "🔊 SOUND ON";
+
+        btn.classList.add(
+            "active"
+        );
+
+        initAudio();
+
+        beep(
+            1000,
+            0.08,
+            "square",
+            0.2
+        );
+
+    }else{
+
+        btn.textContent =
+            "🔇 SOUND OFF";
+
+        btn.classList.remove(
+            "active"
+        );
+
+        stopCarrier();
+
+    }
+
+}
+
+
+/* =====================================================
+   TEST RADIO
+===================================================== */
+
+function testRadio(){
+
+    initAudio();
+
+    setStatusText(
+        "RX • SIGNAL MASUK..."
+    );
+
+    document
+        .getElementById("txrx")
+        .textContent =
+        "RX";
+
+    document
+        .getElementById("txrx")
+        .style.color =
+        "#00e5ff";
+
+    randomSignal();
+
+    /* suara buka squelch */
+
+    staticNoise(0.30);
+
+    setTimeout(function(){
+
+        beep(
+            950,
+            0.06,
+            "square",
+            0.20
+        );
+
+    },180);
+
+    setTimeout(function(){
+
+        document
+            .getElementById("txrx")
+            .textContent =
+            "STANDBY";
+
+        document
+            .getElementById("txrx")
+            .style.color =
+            "#69f0ae";
+
+        setStatusText(
+            "WANS HT READY • OFFLINE"
+        );
+
+    },700);
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function setStatusText(text){
+
+    document
+        .getElementById("status")
+        .textContent = text;
+
+}
+
+
+/* =====================================================
+   KEYBOARD PTT
+   SPACE = PTT
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(e){
+
+        if(
+            e.code === "Space" &&
+            !e.repeat
+        ){
+
+            e.preventDefault();
+
+            startTX();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    function(e){
+
+        if(
+            e.code === "Space"
+        ){
+
+            e.preventDefault();
+
+            stopTX();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   START
+===================================================== */
+
+updateChannel();
+
+randomSignal();
+
+</script>
+
+</body>
+</html>
