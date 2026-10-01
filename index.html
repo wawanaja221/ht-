@@ -2,9 +2,12 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0,user-scalable=no">
 
-<title>WANS HT VIRTUAL</title>
+<title>WANS HT</title>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
 <style>
 *{
@@ -15,518 +18,1328 @@
 body{
     margin:0;
     min-height:100vh;
-    background:#080a0c;
-    color:#fff;
+    background:#070909;
+    color:white;
     font-family:Arial,sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
 }
 
-.ht{
-    width:360px;
-    max-width:94vw;
-    background:#15191d;
-    border:2px solid #30363b;
-    border-radius:25px;
-    padding:18px;
-    box-shadow:0 15px 40px #000;
+.app{
+    width:min(430px,100%);
+    min-height:100vh;
+    margin:auto;
+    padding:14px;
+    background:
+    radial-gradient(circle at top,#263238,#0a0d0f 55%);
 }
 
-.brand{
+.header{
     text-align:center;
+    padding:13px;
+    border:2px solid #37474f;
+    border-radius:15px;
+    background:#101518;
+}
+
+.logo{
+    color:#00e5ff;
+    font-size:25px;
     font-weight:bold;
-    font-size:20px;
-    letter-spacing:2px;
-    color:#ff8c00;
-    margin-bottom:12px;
+    letter-spacing:4px;
+}
+
+.sub{
+    margin-top:4px;
+    font-size:11px;
+    color:#90a4ae;
 }
 
 .screen{
-    background:#06100a;
-    border:3px solid #333;
-    border-radius:12px;
-    padding:15px;
-    box-shadow:inset 0 0 15px #000;
+    margin-top:14px;
+    padding:14px;
+    border:3px solid #263238;
+    border-radius:15px;
+    background:#030605;
+    box-shadow:inset 0 0 25px #000;
 }
 
-.channel{
-    text-align:center;
-    font-size:34px;
-    font-weight:bold;
-    color:#35ff69;
+.display{
+    border:2px solid #37474f;
+    border-radius:9px;
+    padding:12px;
+    background:#071008;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    color:#69f0ae;
+    font-family:monospace;
+    font-size:12px;
 }
 
 .freq{
     text-align:center;
     font-family:monospace;
-    font-size:20px;
-    color:#b8ffbf;
-    margin-top:5px;
+    font-size:38px;
+    font-weight:bold;
+    color:#76ff03;
+    margin:6px 0;
+    text-shadow:0 0 8px #1b5e20;
+}
+
+.rx{
+    text-align:center;
+    color:#69f0ae;
+    min-height:20px;
+    font-family:monospace;
+    font-weight:bold;
+}
+
+.signal{
+    display:flex;
+    gap:3px;
+    height:8px;
+    margin-top:8px;
+}
+
+.signal span{
+    flex:1;
+    background:#263238;
+    border-radius:2px;
+}
+
+.signal span.on{
+    background:#76ff03;
+}
+
+.pttWrap{
+    text-align:center;
+    margin-top:18px;
+}
+
+.ptt{
+    width:215px;
+    height:215px;
+    border-radius:50%;
+    border:10px solid #263238;
+    background:
+    radial-gradient(circle at 40% 30%,
+    #ef5350,#c62828 55%,#700000);
+    color:white;
+    font-size:31px;
+    font-weight:bold;
+    box-shadow:
+    0 12px 25px #000,
+    inset 0 5px 12px #ff8a80;
+    touch-action:none;
+    user-select:none;
+    cursor:pointer;
+}
+
+.ptt.tx{
+    background:
+    radial-gradient(circle,
+    #ff5252,#d50000 60%,#700000);
+
+    box-shadow:
+    0 0 30px red,
+    inset 0 0 30px #ff8a80;
+}
+
+.ptt:disabled{
+    opacity:.4;
+}
+
+.hint{
+    margin-top:8px;
+    color:#90a4ae;
+    font-size:12px;
+}
+
+.panel{
+    margin-top:14px;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #263238;
+    background:#0c1114;
+}
+
+.title{
+    color:#00e5ff;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:9px;
+}
+
+button.normal{
+    width:100%;
+    padding:13px;
+    border:0;
+    border-radius:9px;
+    background:#263238;
+    color:white;
+    font-weight:bold;
+    margin-top:6px;
+    cursor:pointer;
+}
+
+button.normal:active{
+    background:#455a64;
+}
+
+button.micOn{
+    background:#00c853;
+    color:#001b09;
+}
+
+button.micOff{
+    background:#263238;
+    color:white;
+}
+
+.channelList{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:7px;
+}
+
+.channelBtn{
+    padding:12px 5px;
+    border:1px solid #37474f;
+    border-radius:9px;
+    background:#11181c;
+    color:#90a4ae;
+    font-weight:bold;
+}
+
+.channelBtn.active{
+    background:#76ff03;
+    color:#071008;
+    border-color:#76ff03;
+}
+
+.count{
+    min-height:18px;
+    margin-top:6px;
+    text-align:center;
+    color:#ffb300;
+    font-family:monospace;
+    font-weight:bold;
 }
 
 .status{
     text-align:center;
-    margin-top:10px;
-    font-weight:bold;
-    color:#888;
-}
-
-.status.on{
-    color:#ff3030;
-}
-
-.count{
-    text-align:center;
-    height:22px;
-    margin-top:5px;
-    color:#ffb000;
-    font-weight:bold;
-}
-
-.channels{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
-    margin-top:16px;
-}
-
-.ch{
-    border:1px solid #444;
-    border-radius:10px;
-    background:#242a2f;
-    color:#fff;
-    padding:12px 5px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.ch.active{
-    background:#ff7b00;
-    border-color:#ff9d3b;
-    color:#000;
-}
-
-.ptt{
-    width:100%;
-    height:100px;
-    margin-top:18px;
-    border:0;
-    border-radius:18px;
-    background:#9b1717;
-    color:#fff;
-    font-size:30px;
-    font-weight:bold;
-    cursor:pointer;
-    box-shadow:0 7px 0 #4e0808;
-    user-select:none;
-    touch-action:none;
-}
-
-.ptt.on{
-    background:#e51e1e;
-    box-shadow:0 3px 0 #4e0808;
-    transform:translateY(4px);
-}
-
-.info{
-    text-align:center;
-    color:#777;
+    margin-top:12px;
+    color:#90a4ae;
     font-size:12px;
-    margin-top:15px;
-    line-height:1.5;
+}
+
+.micStatus{
+    text-align:center;
+    margin-top:7px;
+    font-size:12px;
+    color:#90a4ae;
+}
+
+.connected{
+    color:#00e676 !important;
 }
 </style>
 </head>
 
 <body>
 
-<div class="ht">
+<div class="app">
 
-    <div class="brand">WANS HT</div>
+<div class="header">
+    <div class="logo">WANS HT</div>
 
-    <div class="screen">
+    <div class="sub">
+        REAL VOICE • FREQUENCY • PTT
+    </div>
+</div>
 
-        <div class="channel" id="channel">
-            CH1
+
+<!-- RADIO -->
+
+<div class="screen">
+
+    <div class="display">
+
+        <div class="top">
+            <span id="channel">CH-01</span>
+            <span>FM</span>
         </div>
 
         <div class="freq" id="freq">
-            433.500 MHz
+            433.500
         </div>
 
-        <div class="status" id="status">
-            PTT OFF
+        <div class="rx" id="rx">
+            STANDBY
         </div>
 
-        <div class="count" id="count"></div>
+        <div class="signal" id="signal">
 
-    </div>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
 
-    <div class="channels">
+        </div>
 
-        <button class="ch active" data-ch="1">
-            CH1
-        </button>
-
-        <button class="ch" data-ch="2">
-            CH2
-        </button>
-
-        <button class="ch" data-ch="3">
-            CH3
-        </button>
-
-        <button class="ch" data-ch="4">
-            CH4
-        </button>
-
-        <button class="ch" data-ch="5">
-            CH5
-        </button>
-
-        <button class="ch" data-ch="6">
-            CH6
-        </button>
-
-    </div>
-
-    <button class="ptt" id="ptt">
-        PTT
-    </button>
-
-    <div class="info">
-        Klik cepat = ON/OFF<br>
-        Tekan/tahan = otomatis OFF setelah 5 detik
     </div>
 
 </div>
 
+
+<!-- PTT -->
+
+<div class="pttWrap">
+
+    <button
+        class="ptt"
+        id="ptt"
+        disabled>
+
+        PTT
+
+    </button>
+
+    <div
+        class="count"
+        id="count">
+    </div>
+
+    <div class="hint">
+        KLIK = ON/OFF • TAHAN LAMA = MAKS 5 DETIK
+    </div>
+
+</div>
+
+
+<!-- MIC -->
+
+<div class="panel">
+
+    <div class="title">
+        MICROPHONE
+    </div>
+
+    <button
+        class="normal"
+        id="micButton"
+        onclick="toggleMic()">
+
+        🎙️ IZINKAN MICROPHONE
+
+    </button>
+
+    <div
+        class="micStatus"
+        id="micStatus">
+
+        MICROPHONE BELUM DIAKTIFKAN
+
+    </div>
+
+</div>
+
+
+<!-- CHANNEL -->
+
+<div class="panel">
+
+    <div class="title">
+        FREKUENSI / CHANNEL
+    </div>
+
+    <div
+        class="channelList"
+        id="channelList">
+    </div>
+
+</div>
+
+
+<button
+    class="normal"
+    onclick="previousChannel()">
+
+    ◀ CHANNEL -
+
+</button>
+
+
+<button
+    class="normal"
+    onclick="nextChannel()">
+
+    CHANNEL + ▶
+
+</button>
+
+
+<div
+    class="status"
+    id="status">
+
+    AKTIFKAN MICROPHONE
+
+</div>
+
+
+<audio
+    id="remoteAudio"
+    autoplay
+    playsinline>
+</audio>
+
+</div>
+
+
 <script>
 
-const channels = {
-    1:"433.500 MHz",
-    2:"433.525 MHz",
-    3:"433.550 MHz",
-    4:"433.575 MHz",
-    5:"433.600 MHz",
-    6:"433.625 MHz"
-};
+/* =====================================================
+   CHANNEL
+===================================================== */
 
-let currentChannel = 1;
+const frequencies = [
+    "433.500",
+    "433.525",
+    "433.550",
+    "433.575",
+    "433.600",
+    "433.625",
+    "433.650",
+    "433.675",
+    "433.700",
+    "433.725",
+    "433.750",
+    "433.775",
+    "433.800",
+    "433.825",
+    "433.850",
+    "433.875"
+];
 
-let pttOn = false;
+let channel = 1;
 
-let pressTimer = null;
+
+/* =====================================================
+   PEER / AUDIO
+===================================================== */
+
+let peer = null;
+let call = null;
+let localStream = null;
+
+let micAllowed = false;
+let connected = false;
+
+
+/* =====================================================
+   PTT
+===================================================== */
+
+let transmitting = false;
+
+let pointerDown = false;
+let holdTimer = null;
 let autoOffTimer = null;
 let countdownTimer = null;
 
 let holdMode = false;
-let pointerDown = false;
-
-const channelText = document.getElementById("channel");
-const freqText = document.getElementById("freq");
-const statusText = document.getElementById("status");
-const countText = document.getElementById("count");
-const pttButton = document.getElementById("ptt");
 
 
-/* =========================
-   CHANNEL
-========================= */
+/* =====================================================
+   AUDIO EFFECT
+===================================================== */
 
-document.querySelectorAll(".ch").forEach(button => {
+let audioCtx = null;
+let master = null;
 
-    button.addEventListener("click", () => {
 
-        currentChannel = Number(button.dataset.ch);
+function initAudio(){
 
-        channelText.textContent =
-            "CH" + currentChannel;
+    if(audioCtx)
+        return;
 
-        freqText.textContent =
-            channels[currentChannel];
+    audioCtx =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
 
-        document.querySelectorAll(".ch")
-        .forEach(b => b.classList.remove("active"));
+    master =
+        audioCtx.createGain();
 
-        button.classList.add("active");
+    master.gain.value = .25;
+
+    master.connect(
+        audioCtx.destination
+    );
+
+}
+
+
+function beep(freq,duration){
+
+    initAudio();
+
+    if(
+        audioCtx.state === "suspended"
+    ){
+
+        audioCtx.resume();
+
+    }
+
+    const osc =
+        audioCtx.createOscillator();
+
+    const gain =
+        audioCtx.createGain();
+
+    osc.type = "square";
+
+    osc.frequency.value = freq;
+
+    gain.gain.setValueAtTime(
+        0,
+        audioCtx.currentTime
+    );
+
+    gain.gain.linearRampToValueAtTime(
+        .20,
+        audioCtx.currentTime+.005
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioCtx.currentTime+duration
+    );
+
+    osc.connect(gain);
+    gain.connect(master);
+
+    osc.start();
+
+    osc.stop(
+        audioCtx.currentTime+
+        duration+.02
+    );
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function setStatus(
+    text,
+    color="#90a4ae"
+){
+
+    const el =
+        document.getElementById("status");
+
+    el.textContent = text;
+    el.style.color = color;
+
+}
+
+
+/* =====================================================
+   MICROPHONE
+===================================================== */
+
+async function enableMic(){
+
+    try{
+
+        if(localStream){
+
+            micAllowed = true;
+
+            return true;
+
+        }
+
+
+        localStream =
+            await navigator.mediaDevices
+            .getUserMedia({
+
+                audio:{
+                    echoCancellation:true,
+                    noiseSuppression:true,
+                    autoGainControl:true
+                },
+
+                video:false
+
+            });
+
 
         /*
-         * Kalau nanti koneksi audio/WebRTC
-         * ditambahkan, bagian pindah room/channel
-         * dilakukan di sini.
+         * Mic langsung dalam kondisi OFF.
+         * Baru ON ketika PTT aktif.
          */
 
-    });
+        localStream
+        .getAudioTracks()
+        .forEach(
+            track=>{
+                track.enabled = false;
+            }
+        );
 
-});
+
+        micAllowed = true;
 
 
-/* =========================
+        document
+        .getElementById("micButton")
+        .textContent =
+            "🎙️ MICROPHONE AKTIF";
+
+        document
+        .getElementById("micButton")
+        .classList.add(
+            "micOn"
+        );
+
+        document
+        .getElementById("micStatus")
+        .textContent =
+            "MICROPHONE SIAP • PTT AKAN MENGIRIM SUARA";
+
+        document
+        .getElementById("micStatus")
+        .style.color =
+            "#00e676";
+
+
+        document
+        .getElementById("ptt")
+        .disabled = false;
+
+
+        setStatus(
+            "MIC AKTIF • PILIH CHANNEL",
+            "#00e676"
+        );
+
+        beep(1200,.08);
+
+        return true;
+
+    }catch(err){
+
+        console.error(err);
+
+        micAllowed = false;
+
+        document
+        .getElementById("micStatus")
+        .textContent =
+            "IZIN MICROPHONE DITOLAK / GAGAL";
+
+        document
+        .getElementById("micStatus")
+        .style.color =
+            "#ff5252";
+
+
+        alert(
+            "Microphone tidak bisa digunakan.\n\n"+
+            "Pastikan izin microphone untuk browser sudah diizinkan."
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
+   TOGGLE MIC
+===================================================== */
+
+async function toggleMic(){
+
+    if(!micAllowed){
+
+        await enableMic();
+
+        return;
+
+    }
+
+
+    /*
+     * Tombol kedua kali:
+     * matikan mic / izin sesi.
+     */
+
+    if(transmitting){
+
+        stopPTT();
+
+    }
+
+
+    if(localStream){
+
+        localStream
+        .getAudioTracks()
+        .forEach(
+            track=>{
+                track.enabled = false;
+            }
+        );
+
+    }
+
+
+    micAllowed = false;
+
+
+    document
+    .getElementById("ptt")
+    .disabled = true;
+
+
+    document
+    .getElementById("micButton")
+    .textContent =
+        "🎙️ IZINKAN MICROPHONE";
+
+    document
+    .getElementById("micButton")
+    .classList.remove(
+        "micOn"
+    );
+
+
+    document
+    .getElementById("micStatus")
+    .textContent =
+        "MICROPHONE DIMATIKAN";
+
+    document
+    .getElementById("micStatus")
+    .style.color =
+        "#90a4ae";
+
+
+    setStatus(
+        "MIC OFF",
+        "#90a4ae"
+    );
+
+}
+
+
+/* =====================================================
    PTT ON
-========================= */
+===================================================== */
 
-function pttStart(){
+function startPTT(){
 
-    if(pttOn) return;
+    if(!micAllowed)
+        return;
 
-    pttOn = true;
+    if(transmitting)
+        return;
 
-    pttButton.classList.add("on");
 
-    statusText.textContent = "PTT ON";
-    statusText.classList.add("on");
+    transmitting = true;
+
+
+    if(localStream){
+
+        localStream
+        .getAudioTracks()
+        .forEach(
+            track=>{
+                track.enabled = true;
+            }
+        );
+
+    }
+
+
+    const ptt =
+        document.getElementById("ptt");
+
+    ptt.classList.add("tx");
+
+
+    document
+    .getElementById("rx")
+    .textContent =
+        "TX";
+
+
+    document
+    .getElementById("rx")
+    .style.color =
+        "#ff1744";
+
+
+    setStatus(
+        "🔴 TX • "+
+        frequencies[channel-1]+
+        " MHz",
+        "#ff1744"
+    );
+
+
+    beep(750,.055);
+
+    setTimeout(
+        ()=>{
+            beep(1250,.045);
+        },
+        65
+    );
 
 }
 
 
-/* =========================
+/* =====================================================
    PTT OFF
-========================= */
+===================================================== */
 
-function pttStop(){
+function stopPTT(){
 
-    pttOn = false;
+    if(!transmitting)
+        return;
 
-    pttButton.classList.remove("on");
 
-    statusText.textContent = "PTT OFF";
-    statusText.classList.remove("on");
+    transmitting = false;
+
+
+    if(localStream){
+
+        localStream
+        .getAudioTracks()
+        .forEach(
+            track=>{
+                track.enabled = false;
+            }
+        );
+
+    }
+
+
+    const ptt =
+        document.getElementById("ptt");
+
+    ptt.classList.remove("tx");
+
+
+    document
+    .getElementById("rx")
+    .textContent =
+        "STANDBY";
+
+
+    document
+    .getElementById("rx")
+    .style.color =
+        "#69f0ae";
+
+
+    document
+    .getElementById("count")
+    .textContent =
+        "";
+
+
+    setStatus(
+        "STANDBY • CH-"+
+        String(channel).padStart(2,"0"),
+        "#90a4ae"
+    );
+
+
+    beep(1100,.055);
+
+    setTimeout(
+        ()=>{
+            beep(750,.08);
+        },
+        70
+    );
 
 }
 
 
-/* =========================
-   MODE TEKAN/TAHAN
-   OTOMATIS 5 DETIK
-========================= */
+/* =====================================================
+   HOLD MODE
+===================================================== */
 
-function startFiveSecondMode(){
+function startHoldMode(){
+
+    if(!micAllowed)
+        return;
+
 
     holdMode = true;
 
+    startPTT();
+
+
     let seconds = 5;
 
-    countText.textContent =
+
+    document
+    .getElementById("count")
+    .textContent =
         "AUTO OFF " + seconds;
 
-    countdownTimer = setInterval(() => {
 
-        seconds--;
+    countdownTimer =
+        setInterval(
+            ()=>{
 
-        if(seconds <= 0){
-
-            clearInterval(countdownTimer);
-            countdownTimer = null;
-
-            countText.textContent = "";
-
-            if(pttOn){
-                pttStop();
-            }
-
-            holdMode = false;
-
-            return;
-        }
-
-        countText.textContent =
-            "AUTO OFF " + seconds;
-
-    },1000);
+                seconds--;
 
 
-    autoOffTimer = setTimeout(() => {
+                if(seconds <= 0){
 
-        if(pttOn){
-            pttStop();
-        }
+                    clearInterval(
+                        countdownTimer
+                    );
 
-        holdMode = false;
+                    countdownTimer =
+                        null;
 
-        countText.textContent = "";
+                    holdMode = false;
 
-    },5000);
+                    document
+                    .getElementById("count")
+                    .textContent =
+                        "";
 
-}
+                    stopPTT();
+
+                    return;
+
+                }
 
 
-/* =========================
-   CANCEL TIMER
-========================= */
+                document
+                .getElementById("count")
+                .textContent =
+                    "AUTO OFF " +
+                    seconds;
 
-function cancelTimers(){
+            },
+            1000
+        );
 
-    if(pressTimer){
-        clearTimeout(pressTimer);
-        pressTimer = null;
-    }
 
-    if(autoOffTimer){
-        clearTimeout(autoOffTimer);
-        autoOffTimer = null;
-    }
+    autoOffTimer =
+        setTimeout(
+            ()=>{
 
-    if(countdownTimer){
-        clearInterval(countdownTimer);
-        countdownTimer = null;
-    }
+                holdMode = false;
 
-    countText.textContent = "";
+                document
+                .getElementById("count")
+                .textContent =
+                    "";
+
+                stopPTT();
+
+            },
+            5000
+        );
 
 }
 
 
-/* =========================
-   POINTER DOWN
-========================= */
+/* =====================================================
+   PTT DOWN
+===================================================== */
 
-function pointerDownHandler(e){
+function pttDown(e){
 
     e.preventDefault();
 
-    if(pointerDown) return;
+
+    if(!micAllowed)
+        return;
+
+
+    if(pointerDown)
+        return;
+
 
     pointerDown = true;
 
-    holdMode = false;
+
+    initAudio();
+
+
+    if(
+        audioCtx &&
+        audioCtx.state === "suspended"
+    ){
+
+        audioCtx.resume();
+
+    }
+
 
     /*
-     * Tunggu 350ms untuk menentukan
-     * apakah tombol ditahan.
+     * 400ms:
+     * sebelum 400ms = klik biasa
+     * setelah 400ms = tekan lama
      */
 
-    pressTimer = setTimeout(() => {
+    holdTimer =
+        setTimeout(
+            ()=>{
 
-        if(pointerDown){
+                if(pointerDown){
 
-            /*
-             * Tombol dianggap ditekan/tahan.
-             */
+                    startHoldMode();
 
-            if(!pttOn){
-                pttStart();
-            }
+                }
 
-            startFiveSecondMode();
-
-        }
-
-    },350);
+            },
+            400
+        );
 
 }
 
 
-/* =========================
-   POINTER UP
-========================= */
+/* =====================================================
+   PTT UP
+===================================================== */
 
-function pointerUpHandler(e){
+function pttUp(e){
 
     e.preventDefault();
 
-    if(!pointerDown) return;
+
+    if(!pointerDown)
+        return;
+
 
     pointerDown = false;
 
+
     /*
-     * Kalau timer belum lewat,
-     * berarti klik biasa.
+     * KLIK BIASA
      */
 
-    if(pressTimer){
+    if(holdTimer){
 
-        clearTimeout(pressTimer);
-        pressTimer = null;
+        clearTimeout(
+            holdTimer
+        );
+
+        holdTimer = null;
+
 
         if(!holdMode){
 
             /*
-             * KLIK BIASA:
              * OFF -> ON
-             * ON  -> OFF
+             * ON -> OFF
              */
 
-            if(pttOn){
-                pttStop();
+            if(transmitting){
+
+                stopPTT();
+
             }else{
-                pttStart();
+
+                startPTT();
+
             }
 
         }
 
         return;
+
     }
 
+
     /*
-     * Kalau sudah masuk mode tahan,
-     * lepas sebelum 5 detik = OFF.
+     * MODE TEKAN LAMA
      */
 
     if(holdMode){
 
         holdMode = false;
 
+
         if(autoOffTimer){
-            clearTimeout(autoOffTimer);
+
+            clearTimeout(
+                autoOffTimer
+            );
+
             autoOffTimer = null;
+
         }
+
 
         if(countdownTimer){
-            clearInterval(countdownTimer);
+
+            clearInterval(
+                countdownTimer
+            );
+
             countdownTimer = null;
+
         }
 
-        countText.textContent = "";
 
-        pttStop();
+        document
+        .getElementById("count")
+        .textContent =
+            "";
+
+
+        stopPTT();
 
     }
 
 }
 
 
-/* =========================
-   EVENT PTT
-========================= */
+/* =====================================================
+   PTT EVENT
+===================================================== */
 
-pttButton.addEventListener(
+const ptt =
+    document.getElementById("ptt");
+
+
+ptt.addEventListener(
     "pointerdown",
-    pointerDownHandler
+    pttDown
 );
 
-pttButton.addEventListener(
+ptt.addEventListener(
     "pointerup",
-    pointerUpHandler
+    pttUp
 );
 
-pttButton.addEventListener(
+ptt.addEventListener(
     "pointercancel",
-    pointerUpHandler
+    pttUp
 );
 
-pttButton.addEventListener(
-    "pointerleave",
-    e => {
+ptt.addEventListener(
+    "contextmenu",
+    e=>e.preventDefault()
+);
 
-        /*
-         * Jangan otomatis OFF hanya
-         * karena pointer keluar tombol.
-         * Tetap tunggu pointerup.
-         */
+
+/* =====================================================
+   CHANNEL BUTTONS
+===================================================== */
+
+function createChannelButtons(){
+
+    const box =
+        document.getElementById(
+            "channelList"
+        );
+
+
+    frequencies.forEach(
+        (frequency,index)=>{
+
+            const btn =
+                document.createElement(
+                    "button"
+                );
+
+
+            btn.className =
+                "channelBtn";
+
+
+            btn.innerHTML =
+                "CH-"+
+                String(index+1)
+                .padStart(2,"0")+
+                "<br>"+
+                frequency+
+                " MHz";
+
+
+            btn.onclick =
+                ()=>{
+
+                    channel =
+                        index+1;
+
+                    updateChannel();
+
+                };
+
+
+            box.appendChild(btn);
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   UPDATE CHANNEL
+===================================================== */
+
+function updateChannel(){
+
+    document
+    .getElementById("channel")
+    .textContent =
+        "CH-"+
+        String(channel)
+        .padStart(2,"0");
+
+
+    document
+    .getElementById("freq")
+    .textContent =
+        frequencies[channel-1];
+
+
+    document
+    .querySelectorAll(".channelBtn")
+    .forEach(
+        (btn,index)=>{
+
+            btn.classList.toggle(
+                "active",
+                index === channel-1
+            );
+
+        }
+    );
+
+
+    signalRandom();
+
+
+    setStatus(
+        "CH-"+
+        String(channel).padStart(2,"0")+
+        " • "+
+        frequencies[channel-1]+
+        " MHz"
+    );
+
+}
+
+
+/* =====================================================
+   NEXT / PREVIOUS
+===================================================== */
+
+function nextChannel(){
+
+    channel++;
+
+    if(
+        channel >
+        frequencies.length
+    ){
+
+        channel = 1;
 
     }
-);
+
+    beep(900,.04);
+
+    updateChannel();
+
+}
 
 
-/* =========================
-   CEGAH MENU SENTUH
-========================= */
+function previousChannel(){
 
-pttButton.addEventListener(
-    "contextmenu",
-    e => e.preventDefault()
+    channel--;
+
+    if(channel < 1){
+
+        channel =
+            frequencies.length;
+
+    }
+
+    beep(650,.04);
+
+    updateChannel();
+
+}
+
+
+/* =====================================================
+   SIGNAL
+===================================================== */
+
+function signalRandom(){
+
+    const bars =
+        document
+        .getElementById("signal")
+        .children;
+
+
+    const level =
+        Math.floor(
+            Math.random()*6
+        )+2;
+
+
+    for(
+        let i=0;
+        i<bars.length;
+        i++
+    ){
+
+        bars[i]
+        .classList
+        .toggle(
+            "on",
+            i < level
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+createChannelButtons();
+
+updateChannel();
+
+setStatus(
+    "AKTIFKAN MICROPHONE"
 );
 
 </script>
