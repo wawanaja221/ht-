@@ -2,12 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>WANS HT</title>
-
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<title>WANS HT VIRTUAL</title>
 
 <style>
 *{
@@ -18,1106 +15,519 @@
 body{
     margin:0;
     min-height:100vh;
-    background:#070909;
-    color:white;
+    background:#080a0c;
+    color:#fff;
     font-family:Arial,sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-.app{
-    width:min(430px,100%);
-    min-height:100vh;
-    margin:auto;
-    padding:14px;
-    background:
-    radial-gradient(circle at top,#263238,#0a0d0f 55%);
+.ht{
+    width:360px;
+    max-width:94vw;
+    background:#15191d;
+    border:2px solid #30363b;
+    border-radius:25px;
+    padding:18px;
+    box-shadow:0 15px 40px #000;
 }
 
-.header{
+.brand{
     text-align:center;
-    padding:13px;
-    border:2px solid #37474f;
-    border-radius:15px;
-    background:#101518;
-}
-
-.logo{
-    color:#00e5ff;
-    font-size:25px;
     font-weight:bold;
-    letter-spacing:4px;
-}
-
-.sub{
-    margin-top:4px;
-    font-size:11px;
-    color:#90a4ae;
+    font-size:20px;
+    letter-spacing:2px;
+    color:#ff8c00;
+    margin-bottom:12px;
 }
 
 .screen{
-    margin-top:14px;
-    padding:14px;
-    border:3px solid #263238;
-    border-radius:15px;
-    background:#030605;
-    box-shadow:inset 0 0 25px #000;
+    background:#06100a;
+    border:3px solid #333;
+    border-radius:12px;
+    padding:15px;
+    box-shadow:inset 0 0 15px #000;
 }
 
-.display{
-    border:2px solid #37474f;
-    border-radius:9px;
-    padding:12px;
-    background:#071008;
-}
-
-.top{
-    display:flex;
-    justify-content:space-between;
-    color:#69f0ae;
-    font-family:monospace;
-    font-size:12px;
+.channel{
+    text-align:center;
+    font-size:34px;
+    font-weight:bold;
+    color:#35ff69;
 }
 
 .freq{
     text-align:center;
     font-family:monospace;
-    font-size:38px;
-    font-weight:bold;
-    color:#76ff03;
-    margin:6px 0;
-    text-shadow:0 0 8px #1b5e20;
-}
-
-.rx{
-    text-align:center;
-    color:#69f0ae;
-    min-height:20px;
-    font-family:monospace;
-    font-weight:bold;
-}
-
-.signal{
-    display:flex;
-    gap:3px;
-    height:8px;
-    margin-top:8px;
-}
-
-.signal span{
-    flex:1;
-    background:#263238;
-    border-radius:2px;
-}
-
-.signal span.on{
-    background:#76ff03;
-}
-
-.pttWrap{
-    text-align:center;
-    margin-top:18px;
-}
-
-.ptt{
-    width:215px;
-    height:215px;
-    border-radius:50%;
-    border:10px solid #263238;
-    background:
-    radial-gradient(circle at 40% 30%,
-    #ef5350,#c62828 55%,#700000);
-    color:white;
-    font-size:31px;
-    font-weight:bold;
-    box-shadow:
-    0 12px 25px #000,
-    inset 0 5px 12px #ff8a80;
-    touch-action:none;
-    user-select:none;
-}
-
-.ptt.tx{
-    background:
-    radial-gradient(circle,
-    #ff5252,#d50000 60%,#700000);
-
-    box-shadow:
-    0 0 30px red,
-    inset 0 0 30px #ff8a80;
-}
-
-.ptt:disabled{
-    opacity:.4;
-}
-
-.hint{
-    margin-top:8px;
-    color:#90a4ae;
-    font-size:12px;
-}
-
-.panel{
-    margin-top:14px;
-    padding:12px;
-    border-radius:12px;
-    border:1px solid #263238;
-    background:#0c1114;
-}
-
-.title{
-    color:#00e5ff;
-    font-size:12px;
-    font-weight:bold;
-    margin-bottom:9px;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    margin-bottom:8px;
-    border-radius:9px;
-    border:1px solid #455a64;
-    background:#050707;
-    color:white;
-    font-size:16px;
-}
-
-button.normal{
-    width:100%;
-    padding:13px;
-    border:0;
-    border-radius:9px;
-    background:#263238;
-    color:white;
-    font-weight:bold;
-    margin-top:6px;
-}
-
-button.normal:active{
-    background:#455a64;
-}
-
-.code{
-    font-family:monospace;
-    font-size:22px;
-    text-align:center;
-    color:#76ff03;
-    letter-spacing:3px;
-    padding:10px;
-    background:#030605;
-    border-radius:8px;
-    margin:8px 0;
+    font-size:20px;
+    color:#b8ffbf;
+    margin-top:5px;
 }
 
 .status{
     text-align:center;
-    margin-top:12px;
-    color:#90a4ae;
+    margin-top:10px;
+    font-weight:bold;
+    color:#888;
+}
+
+.status.on{
+    color:#ff3030;
+}
+
+.count{
+    text-align:center;
+    height:22px;
+    margin-top:5px;
+    color:#ffb000;
+    font-weight:bold;
+}
+
+.channels{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:16px;
+}
+
+.ch{
+    border:1px solid #444;
+    border-radius:10px;
+    background:#242a2f;
+    color:#fff;
+    padding:12px 5px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.ch.active{
+    background:#ff7b00;
+    border-color:#ff9d3b;
+    color:#000;
+}
+
+.ptt{
+    width:100%;
+    height:100px;
+    margin-top:18px;
+    border:0;
+    border-radius:18px;
+    background:#9b1717;
+    color:#fff;
+    font-size:30px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 7px 0 #4e0808;
+    user-select:none;
+    touch-action:none;
+}
+
+.ptt.on{
+    background:#e51e1e;
+    box-shadow:0 3px 0 #4e0808;
+    transform:translateY(4px);
+}
+
+.info{
+    text-align:center;
+    color:#777;
     font-size:12px;
-}
-
-.connected{
-    color:#00e676 !important;
-}
-
-.remote{
-    display:none;
+    margin-top:15px;
+    line-height:1.5;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<div class="ht">
 
-<div class="header">
-    <div class="logo">WANS HT</div>
-    <div class="sub">
-        REAL VOICE • WEBRTC • PTT
-    </div>
-</div>
+    <div class="brand">WANS HT</div>
 
+    <div class="screen">
 
-<!-- RADIO -->
-
-<div class="screen">
-
-    <div class="display">
-
-        <div class="top">
-            <span id="channel">CH-01</span>
-            <span>FM</span>
+        <div class="channel" id="channel">
+            CH1
         </div>
 
         <div class="freq" id="freq">
-            433.500
+            433.500 MHz
         </div>
 
-        <div class="rx" id="rx">
-            STANDBY
+        <div class="status" id="status">
+            PTT OFF
         </div>
 
-        <div class="signal" id="signal">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+        <div class="count" id="count"></div>
 
     </div>
 
-</div>
+    <div class="channels">
 
+        <button class="ch active" data-ch="1">
+            CH1
+        </button>
 
-<!-- PTT -->
+        <button class="ch" data-ch="2">
+            CH2
+        </button>
 
-<div class="pttWrap">
+        <button class="ch" data-ch="3">
+            CH3
+        </button>
 
-    <button
-        class="ptt"
-        id="ptt"
-        disabled>
+        <button class="ch" data-ch="4">
+            CH4
+        </button>
+
+        <button class="ch" data-ch="5">
+            CH5
+        </button>
+
+        <button class="ch" data-ch="6">
+            CH6
+        </button>
+
+    </div>
+
+    <button class="ptt" id="ptt">
         PTT
     </button>
 
-    <div class="hint">
-        TEKAN & TAHAN UNTUK BICARA
+    <div class="info">
+        Klik cepat = ON/OFF<br>
+        Tekan/tahan = otomatis OFF setelah 5 detik
     </div>
 
 </div>
-
-
-<!-- CONNECTION -->
-
-<div class="panel">
-
-    <div class="title">
-        1. NAMA HT
-    </div>
-
-    <input
-        id="name"
-        value="WANS"
-        placeholder="Nama">
-
-</div>
-
-
-<div class="panel">
-
-    <div class="title">
-        2. BUAT KONEKSI
-    </div>
-
-    <button
-        class="normal"
-        onclick="createRoom()">
-        📡 BUAT KODE HT
-    </button>
-
-    <div
-        class="code"
-        id="myCode">
-        ------
-    </div>
-
-    <button
-        class="normal"
-        onclick="copyCode()">
-        COPY KODE
-    </button>
-
-</div>
-
-
-<div class="panel">
-
-    <div class="title">
-        3. HUBUNGKAN KE HT LAIN
-    </div>
-
-    <input
-        id="remoteCode"
-        placeholder="Masukkan kode HT lain">
-
-    <button
-        class="normal"
-        onclick="connectHT()">
-        🔗 HUBUNGKAN
-    </button>
-
-</div>
-
-
-<!-- CHANNEL -->
-
-<div class="panel">
-
-    <div class="title">
-        CHANNEL
-    </div>
-
-    <button
-        class="normal"
-        onclick="previousChannel()">
-        ◀ CHANNEL -
-    </button>
-
-    <button
-        class="normal"
-        onclick="nextChannel()">
-        CHANNEL + ▶
-    </button>
-
-</div>
-
-
-<div class="status" id="status">
-    BELUM TERHUBUNG
-</div>
-
-<audio
-    id="remoteAudio"
-    autoplay
-    playsinline>
-</audio>
-
-</div>
-
 
 <script>
 
-/* =====================================================
-   WANS HT REAL VOICE
-===================================================== */
+const channels = {
+    1:"433.500 MHz",
+    2:"433.525 MHz",
+    3:"433.550 MHz",
+    4:"433.575 MHz",
+    5:"433.600 MHz",
+    6:"433.625 MHz"
+};
 
-let peer = null;
-let call = null;
+let currentChannel = 1;
 
-let localStream = null;
+let pttOn = false;
 
-let connected = false;
-let transmitting = false;
+let pressTimer = null;
+let autoOffTimer = null;
+let countdownTimer = null;
 
-let channel = 1;
+let holdMode = false;
+let pointerDown = false;
 
-const frequencies = [
-    "433.500",
-    "433.525",
-    "433.550",
-    "433.575",
-    "433.600",
-    "433.625",
-    "433.650",
-    "433.675",
-    "433.700",
-    "433.725",
-    "433.750",
-    "433.775",
-    "433.800",
-    "433.825",
-    "433.850",
-    "433.875"
-];
+const channelText = document.getElementById("channel");
+const freqText = document.getElementById("freq");
+const statusText = document.getElementById("status");
+const countText = document.getElementById("count");
+const pttButton = document.getElementById("ptt");
 
 
-/* =====================================================
-   AUDIO EFFECT
-===================================================== */
+/* =========================
+   CHANNEL
+========================= */
 
-let audioCtx = null;
-let master = null;
+document.querySelectorAll(".ch").forEach(button => {
 
+    button.addEventListener("click", () => {
 
-function initAudio(){
+        currentChannel = Number(button.dataset.ch);
 
-    if(audioCtx)
-        return;
+        channelText.textContent =
+            "CH" + currentChannel;
 
-    audioCtx =
-        new (
-            window.AudioContext ||
-            window.webkitAudioContext
-        )();
+        freqText.textContent =
+            channels[currentChannel];
 
-    master =
-        audioCtx.createGain();
+        document.querySelectorAll(".ch")
+        .forEach(b => b.classList.remove("active"));
 
-    master.gain.value =
-        0.25;
-
-    master.connect(
-        audioCtx.destination
-    );
-
-}
-
-
-function beep(freq,duration){
-
-    initAudio();
-
-    if(audioCtx.state === "suspended")
-        audioCtx.resume();
-
-    const osc =
-        audioCtx.createOscillator();
-
-    const gain =
-        audioCtx.createGain();
-
-    osc.type = "square";
-
-    osc.frequency.value =
-        freq;
-
-    gain.gain.setValueAtTime(
-        0,
-        audioCtx.currentTime
-    );
-
-    gain.gain.linearRampToValueAtTime(
-        .25,
-        audioCtx.currentTime+.005
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        .001,
-        audioCtx.currentTime+duration
-    );
-
-    osc.connect(gain);
-    gain.connect(master);
-
-    osc.start();
-
-    osc.stop(
-        audioCtx.currentTime+
-        duration+.02
-    );
-
-}
-
-
-/* =====================================================
-   STATUS
-===================================================== */
-
-function status(text,color="#90a4ae"){
-
-    const el =
-        document.getElementById("status");
-
-    el.textContent = text;
-    el.style.color = color;
-
-}
-
-
-/* =====================================================
-   CREATE ROOM
-===================================================== */
-
-async function createRoom(){
-
-    try{
-
-        await getMic();
-
-        if(peer){
-
-            peer.destroy();
-
-        }
+        button.classList.add("active");
 
         /*
-          ID dibuat random.
-          Tidak perlu memasukkan ID sendiri.
-        */
+         * Kalau nanti koneksi audio/WebRTC
+         * ditambahkan, bagian pindah room/channel
+         * dilakukan di sini.
+         */
 
-        const id =
-            "WANS-" +
-            Math.random()
-            .toString(36)
-            .substring(2,8)
-            .toUpperCase();
-
-
-        peer =
-            new Peer(id);
-
-
-        peer.on(
-            "open",
-            function(id){
-
-                document
-                .getElementById("myCode")
-                .textContent = id;
-
-                status(
-                    "KODE SIAP • KIRIM KE HP LAIN",
-                    "#00e5ff"
-                );
-
-                beep(1000,.08);
-
-            }
-        );
-
-
-        peer.on(
-            "call",
-            function(incoming){
-
-                call = incoming;
-
-                call.answer(
-                    localStream
-                );
-
-                setupCall(call);
-
-            }
-        );
-
-
-        peer.on(
-            "error",
-            function(err){
-
-                console.error(err);
-
-                status(
-                    "ERROR: "+err.type,
-                    "#ff5252"
-                );
-
-            }
-        );
-
-    }catch(err){
-
-        alert(
-            "Microphone gagal:\n"+
-            err.message
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   MICROPHONE
-===================================================== */
-
-async function getMic(){
-
-    if(localStream)
-        return;
-
-    localStream =
-        await navigator.mediaDevices
-        .getUserMedia({
-            audio:{
-                echoCancellation:true,
-                noiseSuppression:true,
-                autoGainControl:true
-            },
-            video:false
-        });
-
-    /*
-       Awalnya mic OFF.
-       Jadi baru mengirim suara
-       ketika PTT ditekan.
-    */
-
-    localStream
-    .getAudioTracks()
-    .forEach(track=>{
-        track.enabled = false;
     });
 
+});
+
+
+/* =========================
+   PTT ON
+========================= */
+
+function pttStart(){
+
+    if(pttOn) return;
+
+    pttOn = true;
+
+    pttButton.classList.add("on");
+
+    statusText.textContent = "PTT ON";
+    statusText.classList.add("on");
+
 }
 
 
-/* =====================================================
-   CONNECT
-===================================================== */
+/* =========================
+   PTT OFF
+========================= */
 
-async function connectHT(){
+function pttStop(){
 
-    try{
+    pttOn = false;
 
-        await getMic();
+    pttButton.classList.remove("on");
 
-        if(!peer){
+    statusText.textContent = "PTT OFF";
+    statusText.classList.remove("on");
 
-            /*
-              Buat peer sementara
-            */
-
-            peer =
-                new Peer();
-
-        }
+}
 
 
-        const remote =
-            document
-            .getElementById("remoteCode")
-            .value
-            .trim()
-            .toUpperCase();
+/* =========================
+   MODE TEKAN/TAHAN
+   OTOMATIS 5 DETIK
+========================= */
 
+function startFiveSecondMode(){
 
-        if(!remote){
+    holdMode = true;
 
-            alert(
-                "Masukkan kode HT lain."
-            );
+    let seconds = 5;
+
+    countText.textContent =
+        "AUTO OFF " + seconds;
+
+    countdownTimer = setInterval(() => {
+
+        seconds--;
+
+        if(seconds <= 0){
+
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+
+            countText.textContent = "";
+
+            if(pttOn){
+                pttStop();
+            }
+
+            holdMode = false;
 
             return;
-
         }
 
+        countText.textContent =
+            "AUTO OFF " + seconds;
 
-        peer.on(
-            "open",
-            function(){
-
-                call =
-                    peer.call(
-                        remote,
-                        localStream
-                    );
-
-                setupCall(call);
-
-            }
-        );
+    },1000);
 
 
-        /*
-          Kalau peer sudah terbuka
-        */
+    autoOffTimer = setTimeout(() => {
 
-        if(
-            peer.open
-        ){
-
-            call =
-                peer.call(
-                    remote,
-                    localStream
-                );
-
-            setupCall(call);
-
+        if(pttOn){
+            pttStop();
         }
 
+        holdMode = false;
 
-    }catch(err){
+        countText.textContent = "";
 
-        console.error(err);
+    },5000);
 
-        alert(
-            "Gagal menghubungkan:\n"+
-            err.message
-        );
+}
 
+
+/* =========================
+   CANCEL TIMER
+========================= */
+
+function cancelTimers(){
+
+    if(pressTimer){
+        clearTimeout(pressTimer);
+        pressTimer = null;
     }
 
-}
+    if(autoOffTimer){
+        clearTimeout(autoOffTimer);
+        autoOffTimer = null;
+    }
 
+    if(countdownTimer){
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+    }
 
-/* =====================================================
-   CALL
-===================================================== */
-
-function setupCall(c){
-
-    call = c;
-
-    call.on(
-        "stream",
-        function(remoteStream){
-
-            const audio =
-                document
-                .getElementById(
-                    "remoteAudio"
-                );
-
-            audio.srcObject =
-                remoteStream;
-
-            audio.play()
-            .catch(()=>{
-                status(
-                    "Tekan layar sekali untuk audio",
-                    "#ffb300"
-                );
-            });
-
-            connected = true;
-
-            document
-            .getElementById("ptt")
-            .disabled = false;
-
-            document
-            .getElementById("rx")
-            .textContent =
-                "CONNECTED";
-
-            document
-            .getElementById("rx")
-            .style.color =
-                "#00e676";
-
-            status(
-                "TERHUBUNG • SIAP PTT",
-                "#00e676"
-            );
-
-            signalFull();
-
-            beep(1400,.08);
-
-        }
-    );
-
-
-    call.on(
-        "close",
-        function(){
-
-            connected = false;
-
-            document
-            .getElementById("ptt")
-            .disabled = true;
-
-            status(
-                "KONEKSI TERPUTUS",
-                "#ff5252"
-            );
-
-        }
-    );
-
-
-    call.on(
-        "error",
-        function(err){
-
-            console.error(err);
-
-            status(
-                "KONEKSI ERROR",
-                "#ff5252"
-            );
-
-        }
-    );
+    countText.textContent = "";
 
 }
 
 
-/* =====================================================
-   PTT
-===================================================== */
+/* =========================
+   POINTER DOWN
+========================= */
 
-const ptt =
-    document.getElementById("ptt");
-
-
-function startPTT(e){
+function pointerDownHandler(e){
 
     e.preventDefault();
 
-    if(!connected)
-        return;
+    if(pointerDown) return;
 
-    if(transmitting)
-        return;
+    pointerDown = true;
 
-    transmitting = true;
-
-    localStream
-    .getAudioTracks()
-    .forEach(track=>{
-        track.enabled = true;
-    });
-
-
-    ptt.classList.add("tx");
-
-    document
-    .getElementById("rx")
-    .textContent = "TX";
-
-    document
-    .getElementById("rx")
-    .style.color =
-        "#ff1744";
-
-    status(
-        "🔴 TX • BICARA",
-        "#ff1744"
-    );
-
-    beep(750,.055);
-
-    setTimeout(
-        ()=>{
-            beep(1250,.045);
-        },
-        65
-    );
-
-}
-
-
-function stopPTT(e){
-
-    if(e)
-        e.preventDefault();
-
-    if(!transmitting)
-        return;
-
-    transmitting = false;
-
-    localStream
-    .getAudioTracks()
-    .forEach(track=>{
-        track.enabled = false;
-    });
-
-
-    ptt.classList.remove("tx");
-
-    document
-    .getElementById("rx")
-    .textContent =
-        "CONNECTED";
-
-    document
-    .getElementById("rx")
-    .style.color =
-        "#00e676";
-
-    status(
-        "TERHUBUNG • SIAP PTT",
-        "#00e676"
-    );
+    holdMode = false;
 
     /*
-       Roger beep
-    */
+     * Tunggu 350ms untuk menentukan
+     * apakah tombol ditahan.
+     */
 
-    setTimeout(
-        ()=>{
-            beep(1100,.055);
+    pressTimer = setTimeout(() => {
 
-            setTimeout(
-                ()=>{
-                    beep(750,.08);
-                },
-                70
-            );
+        if(pointerDown){
 
-        },
-        20
-    );
+            /*
+             * Tombol dianggap ditekan/tahan.
+             */
 
-}
+            if(!pttOn){
+                pttStart();
+            }
 
+            startFiveSecondMode();
 
-ptt.addEventListener(
-    "pointerdown",
-    startPTT
-);
+        }
 
-ptt.addEventListener(
-    "pointerup",
-    stopPTT
-);
-
-ptt.addEventListener(
-    "pointercancel",
-    stopPTT
-);
-
-
-/* =====================================================
-   CHANNEL
-===================================================== */
-
-function updateChannel(){
-
-    document
-    .getElementById("channel")
-    .textContent =
-        "CH-" +
-        String(channel)
-        .padStart(2,"0");
-
-    document
-    .getElementById("freq")
-    .textContent =
-        frequencies[channel-1];
-
-    signalRandom();
+    },350);
 
 }
 
 
-function nextChannel(){
+/* =========================
+   POINTER UP
+========================= */
 
-    channel++;
+function pointerUpHandler(e){
 
-    if(
-        channel >
-        frequencies.length
-    )
-        channel = 1;
+    e.preventDefault();
 
-    beep(900,.04);
+    if(!pointerDown) return;
 
-    updateChannel();
+    pointerDown = false;
 
-}
+    /*
+     * Kalau timer belum lewat,
+     * berarti klik biasa.
+     */
 
+    if(pressTimer){
 
-function previousChannel(){
+        clearTimeout(pressTimer);
+        pressTimer = null;
 
-    channel--;
+        if(!holdMode){
 
-    if(channel < 1)
-        channel =
-            frequencies.length;
+            /*
+             * KLIK BIASA:
+             * OFF -> ON
+             * ON  -> OFF
+             */
 
-    beep(650,.04);
+            if(pttOn){
+                pttStop();
+            }else{
+                pttStart();
+            }
 
-    updateChannel();
-
-}
-
-
-/* =====================================================
-   SIGNAL
-===================================================== */
-
-function signalRandom(){
-
-    const bars =
-        document
-        .getElementById("signal")
-        .children;
-
-    const level =
-        Math.floor(
-            Math.random()*6
-        )+2;
-
-    for(
-        let i=0;
-        i<bars.length;
-        i++
-    ){
-
-        bars[i]
-        .classList
-        .toggle(
-            "on",
-            i < level
-        );
-
-    }
-
-}
-
-
-function signalFull(){
-
-    const bars =
-        document
-        .getElementById("signal")
-        .children;
-
-    for(
-        let i=0;
-        i<bars.length;
-        i++
-    ){
-
-        bars[i]
-        .classList
-        .add("on");
-
-    }
-
-}
-
-
-/* =====================================================
-   COPY
-===================================================== */
-
-async function copyCode(){
-
-    const code =
-        document
-        .getElementById("myCode")
-        .textContent;
-
-    if(
-        !code ||
-        code === "------"
-    ){
-
-        alert(
-            "Buat kode HT dulu."
-        );
+        }
 
         return;
-
     }
 
+    /*
+     * Kalau sudah masuk mode tahan,
+     * lepas sebelum 5 detik = OFF.
+     */
 
-    try{
+    if(holdMode){
 
-        await navigator.clipboard
-        .writeText(code);
+        holdMode = false;
 
-        alert(
-            "Kode berhasil dicopy."
-        );
+        if(autoOffTimer){
+            clearTimeout(autoOffTimer);
+            autoOffTimer = null;
+        }
 
-    }catch{
+        if(countdownTimer){
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+        }
 
-        alert(
-            "Copy gagal. Tekan lama kode lalu copy."
-        );
+        countText.textContent = "";
+
+        pttStop();
 
     }
 
 }
 
 
-/* =====================================================
-   INIT
-===================================================== */
+/* =========================
+   EVENT PTT
+========================= */
 
-updateChannel();
+pttButton.addEventListener(
+    "pointerdown",
+    pointerDownHandler
+);
+
+pttButton.addEventListener(
+    "pointerup",
+    pointerUpHandler
+);
+
+pttButton.addEventListener(
+    "pointercancel",
+    pointerUpHandler
+);
+
+pttButton.addEventListener(
+    "pointerleave",
+    e => {
+
+        /*
+         * Jangan otomatis OFF hanya
+         * karena pointer keluar tombol.
+         * Tetap tunggu pointerup.
+         */
+
+    }
+);
+
+
+/* =========================
+   CEGAH MENU SENTUH
+========================= */
+
+pttButton.addEventListener(
+    "contextmenu",
+    e => e.preventDefault()
+);
 
 </script>
 
