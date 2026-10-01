@@ -7,8 +7,6 @@
 
 <title>WANS HT</title>
 
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-
 <style>
 *{
     box-sizing:border-box;
@@ -122,18 +120,22 @@ body{
     height:215px;
     border-radius:50%;
     border:10px solid #263238;
+
     background:
     radial-gradient(circle at 40% 30%,
     #ef5350,#c62828 55%,#700000);
+
     color:white;
     font-size:31px;
     font-weight:bold;
+
     box-shadow:
     0 12px 25px #000,
     inset 0 5px 12px #ff8a80;
+
     touch-action:none;
     user-select:none;
-    cursor:pointer;
+    -webkit-user-select:none;
 }
 
 .ptt.tx{
@@ -171,6 +173,17 @@ body{
     margin-bottom:9px;
 }
 
+input{
+    width:100%;
+    padding:12px;
+    margin-bottom:8px;
+    border-radius:9px;
+    border:1px solid #455a64;
+    background:#050707;
+    color:white;
+    font-size:16px;
+}
+
 button.normal{
     width:100%;
     padding:13px;
@@ -180,51 +193,39 @@ button.normal{
     color:white;
     font-weight:bold;
     margin-top:6px;
-    cursor:pointer;
 }
 
 button.normal:active{
     background:#455a64;
 }
 
-button.micOn{
-    background:#00c853;
-    color:#001b09;
+button.normal.green{
+    background:#00695c;
 }
 
-button.micOff{
-    background:#263238;
-    color:white;
+button.normal.red{
+    background:#b71c1c;
 }
 
-.channelList{
+.channelButtons{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:1fr 1fr;
     gap:7px;
 }
 
-.channelBtn{
+.chBtn{
     padding:12px 5px;
     border:1px solid #37474f;
-    border-radius:9px;
-    background:#11181c;
+    border-radius:8px;
+    background:#11191d;
     color:#90a4ae;
     font-weight:bold;
 }
 
-.channelBtn.active{
-    background:#76ff03;
-    color:#071008;
+.chBtn.active{
+    background:#1b5e20;
+    color:#76ff03;
     border-color:#76ff03;
-}
-
-.count{
-    min-height:18px;
-    margin-top:6px;
-    text-align:center;
-    color:#ffb300;
-    font-family:monospace;
-    font-weight:bold;
 }
 
 .status{
@@ -234,15 +235,32 @@ button.micOff{
     font-size:12px;
 }
 
-.micStatus{
-    text-align:center;
-    margin-top:7px;
-    font-size:12px;
-    color:#90a4ae;
-}
-
 .connected{
     color:#00e676 !important;
+}
+
+.txStatus{
+    color:#ff5252 !important;
+}
+
+.peerList{
+    margin-top:8px;
+    font-family:monospace;
+    font-size:11px;
+    color:#69f0ae;
+    text-align:center;
+}
+
+.remoteAudio{
+    display:none;
+}
+
+.small{
+    font-size:10px;
+    color:#607d8b;
+    text-align:center;
+    margin-top:8px;
+    line-height:1.5;
 }
 </style>
 </head>
@@ -251,162 +269,153 @@ button.micOff{
 
 <div class="app">
 
-<div class="header">
-    <div class="logo">WANS HT</div>
-
-    <div class="sub">
-        REAL VOICE • FREQUENCY • PTT
+    <div class="header">
+        <div class="logo">WANS HT</div>
+        <div class="sub">
+            REAL VOICE • WEBRTC • CHANNEL
+        </div>
     </div>
-</div>
 
+    <div class="screen">
 
-<!-- RADIO -->
+        <div class="display">
 
-<div class="screen">
+            <div class="top">
+                <span id="channel">CH-01</span>
+                <span>FM</span>
+            </div>
 
-    <div class="display">
+            <div class="freq" id="freq">
+                433.500
+            </div>
 
-        <div class="top">
-            <span id="channel">CH-01</span>
-            <span>FM</span>
-        </div>
+            <div class="rx" id="rx">
+                STANDBY
+            </div>
 
-        <div class="freq" id="freq">
-            433.500
-        </div>
-
-        <div class="rx" id="rx">
-            STANDBY
-        </div>
-
-        <div class="signal" id="signal">
-
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+            <div class="signal" id="signal">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
 
         </div>
 
     </div>
 
-</div>
+    <div class="pttWrap">
 
+        <button
+            class="ptt"
+            id="ptt"
+            disabled>
+            PTT
+        </button>
 
-<!-- PTT -->
-
-<div class="pttWrap">
-
-    <button
-        class="ptt"
-        id="ptt"
-        disabled>
-
-        PTT
-
-    </button>
-
-    <div
-        class="count"
-        id="count">
-    </div>
-
-    <div class="hint">
-        KLIK = ON/OFF • TAHAN LAMA = MAKS 5 DETIK
-    </div>
-
-</div>
-
-
-<!-- MIC -->
-
-<div class="panel">
-
-    <div class="title">
-        MICROPHONE
-    </div>
-
-    <button
-        class="normal"
-        id="micButton"
-        onclick="toggleMic()">
-
-        🎙️ IZINKAN MICROPHONE
-
-    </button>
-
-    <div
-        class="micStatus"
-        id="micStatus">
-
-        MICROPHONE BELUM DIAKTIFKAN
+        <div class="hint">
+            KLIK = ON/OFF • TAHAN = MAKS 5 DETIK
+        </div>
 
     </div>
 
-</div>
+    <!-- MICROPHONE -->
+    <div class="panel">
 
+        <div class="title">
+            MICROPHONE
+        </div>
 
-<!-- CHANNEL -->
+        <button
+            class="normal"
+            id="micButton">
+            🎙️ IZINKAN MICROPHONE
+        </button>
 
-<div class="panel">
+        <div class="small">
+            Izinkan microphone terlebih dahulu sebelum PTT.
+        </div>
 
-    <div class="title">
-        FREKUENSI / CHANNEL
     </div>
 
-    <div
-        class="channelList"
-        id="channelList">
+    <!-- NAMA -->
+    <div class="panel">
+
+        <div class="title">
+            NAMA HT
+        </div>
+
+        <input
+            id="name"
+            value="WANS"
+            placeholder="Nama HT">
+
     </div>
 
-</div>
+    <!-- CHANNEL -->
+    <div class="panel">
 
+        <div class="title">
+            CHANNEL / FREKUENSI
+        </div>
 
-<button
-    class="normal"
-    onclick="previousChannel()">
+        <div
+            class="channelButtons"
+            id="channelButtons">
+        </div>
 
-    ◀ CHANNEL -
+        <button
+            class="normal"
+            onclick="previousChannel()">
+            ◀ CHANNEL -
+        </button>
 
-</button>
+        <button
+            class="normal"
+            onclick="nextChannel()">
+            CHANNEL + ▶
+        </button>
 
+    </div>
 
-<button
-    class="normal"
-    onclick="nextChannel()">
+    <div class="status" id="status">
+        MEMUAT KONEKSI...
+    </div>
 
-    CHANNEL + ▶
+    <div class="peerList" id="peerList">
+        BELUM ADA HT LAIN
+    </div>
 
-</button>
+    <div class="small">
+        Channel yang sama = satu grup komunikasi.
+    </div>
 
-
-<div
-    class="status"
-    id="status">
-
-    AKTIFKAN MICROPHONE
+    <div id="audioContainer"></div>
 
 </div>
 
 
-<audio
-    id="remoteAudio"
-    autoplay
-    playsinline>
-</audio>
+<script type="module">
 
-</div>
+/* =========================================================
+   TRYSTERO
+   ========================================================= */
+
+import {
+    joinRoom
+} from "https://esm.run/trystero";
 
 
-<script>
+/* =========================================================
+   KONFIGURASI
+   ========================================================= */
 
-/* =====================================================
-   CHANNEL
-===================================================== */
+const APP_ID = "wans-ht-real-voice-v1";
+
 
 const frequencies = [
     "433.500",
@@ -427,154 +436,340 @@ const frequencies = [
     "433.875"
 ];
 
-let channel = 1;
 
+/* =========================================================
+   VARIABEL
+   ========================================================= */
 
-/* =====================================================
-   PEER / AUDIO
-===================================================== */
+let currentChannel = 0;
 
-let peer = null;
-let call = null;
+let room = null;
+
 let localStream = null;
 
-let micAllowed = false;
-let connected = false;
-
-
-/* =====================================================
-   PTT
-===================================================== */
+let micEnabled = false;
 
 let transmitting = false;
 
-let pointerDown = false;
-let holdTimer = null;
-let autoOffTimer = null;
-let countdownTimer = null;
-
 let holdMode = false;
 
+let holdTimer = null;
 
-/* =====================================================
-   AUDIO EFFECT
-===================================================== */
+let fiveSecondTimer = null;
 
-let audioCtx = null;
-let master = null;
+let pressStarted = 0;
 
+let pointerIsDown = false;
 
-function initAudio(){
-
-    if(audioCtx)
-        return;
-
-    audioCtx =
-        new (
-            window.AudioContext ||
-            window.webkitAudioContext
-        )();
-
-    master =
-        audioCtx.createGain();
-
-    master.gain.value = .25;
-
-    master.connect(
-        audioCtx.destination
-    );
-
-}
+let remotePeers = new Map();
 
 
-function beep(freq,duration){
+/* =========================================================
+   ELEMENT
+   ========================================================= */
 
-    initAudio();
+const channelEl =
+    document.getElementById("channel");
 
-    if(
-        audioCtx.state === "suspended"
-    ){
+const freqEl =
+    document.getElementById("freq");
 
-        audioCtx.resume();
+const rxEl =
+    document.getElementById("rx");
 
-    }
+const statusEl =
+    document.getElementById("status");
 
-    const osc =
-        audioCtx.createOscillator();
+const peerListEl =
+    document.getElementById("peerList");
 
-    const gain =
-        audioCtx.createGain();
+const ptt =
+    document.getElementById("ptt");
 
-    osc.type = "square";
+const micButton =
+    document.getElementById("micButton");
 
-    osc.frequency.value = freq;
+const audioContainer =
+    document.getElementById("audioContainer");
 
-    gain.gain.setValueAtTime(
-        0,
-        audioCtx.currentTime
-    );
+const signalBars =
+    document.querySelectorAll("#signal span");
 
-    gain.gain.linearRampToValueAtTime(
-        .20,
-        audioCtx.currentTime+.005
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        .001,
-        audioCtx.currentTime+duration
-    );
-
-    osc.connect(gain);
-    gain.connect(master);
-
-    osc.start();
-
-    osc.stop(
-        audioCtx.currentTime+
-        duration+.02
-    );
-
-}
+const channelButtons =
+    document.getElementById("channelButtons");
 
 
-/* =====================================================
-   STATUS
-===================================================== */
+/* =========================================================
+   BUAT TOMBOL CHANNEL
+   ========================================================= */
 
-function setStatus(
-    text,
-    color="#90a4ae"
-){
+function createChannelButtons(){
 
-    const el =
-        document.getElementById("status");
+    channelButtons.innerHTML = "";
 
-    el.textContent = text;
-    el.style.color = color;
+    frequencies.forEach((freq,index)=>{
+
+        const button =
+            document.createElement("button");
+
+        button.className = "chBtn";
+
+        button.textContent =
+            "CH-" +
+            String(index + 1).padStart(2,"0");
+
+        button.onclick = () => {
+
+            if(index === currentChannel){
+                return;
+            }
+
+            changeChannel(index);
+
+        };
+
+        channelButtons.appendChild(button);
+
+    });
+
+    updateChannelButtons();
 
 }
 
 
-/* =====================================================
-   MICROPHONE
-===================================================== */
+/* =========================================================
+   UPDATE DISPLAY
+   ========================================================= */
 
-async function enableMic(){
+function updateDisplay(){
+
+    channelEl.textContent =
+        "CH-" +
+        String(currentChannel + 1).padStart(2,"0");
+
+    freqEl.textContent =
+        frequencies[currentChannel];
+
+    updateChannelButtons();
+
+}
+
+
+/* =========================================================
+   CHANNEL BUTTON ACTIVE
+   ========================================================= */
+
+function updateChannelButtons(){
+
+    [...channelButtons.children]
+        .forEach((button,index)=>{
+
+            button.classList.toggle(
+                "active",
+                index === currentChannel
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   ROOM ID
+   ========================================================= */
+
+function getRoomId(){
+
+    /*
+       Frekuensi dijadikan nama room.
+
+       CH-01 = room 433.500
+       CH-02 = room 433.525
+       dst.
+    */
+
+    return "frequency-" +
+           frequencies[currentChannel]
+           .replace(".","-");
+
+}
+
+
+/* =========================================================
+   MASUK CHANNEL
+   ========================================================= */
+
+async function joinCurrentChannel(){
 
     try{
 
-        if(localStream){
+        if(room){
 
-            micAllowed = true;
+            try{
+                room.leave();
+            }catch(e){}
 
-            return true;
-
+            room = null;
         }
 
 
+        remotePeers.clear();
+
+        removeAllAudio();
+
+        updatePeerList();
+
+
+        const roomId =
+            getRoomId();
+
+
+        statusEl.textContent =
+            "MENCARI HT DI " +
+            frequencies[currentChannel] +
+            "...";
+
+
+        rxEl.textContent =
+            "STANDBY";
+
+
+        /*
+          Room otomatis berdasarkan frekuensi.
+          Tidak ada kode undangan.
+        */
+
+        room = joinRoom(
+            {
+                appId: APP_ID
+            },
+            roomId,
+            {
+                onJoinError(error){
+
+                    console.error(error);
+
+                    statusEl.textContent =
+                        "KONEKSI ROOM GAGAL";
+
+                }
+            }
+        );
+
+
+        room.onPeerJoin =
+            peerId => {
+
+                console.log(
+                    "HT MASUK:",
+                    peerId
+                );
+
+                statusEl.textContent =
+                    "HT LAIN TERDETEKSI";
+
+                rxEl.textContent =
+                    "STANDBY";
+
+                updateSignal(
+                    true
+                );
+
+                updatePeerList();
+
+            };
+
+
+        room.onPeerLeave =
+            peerId => {
+
+                console.log(
+                    "HT KELUAR:",
+                    peerId
+                );
+
+                removeAudio(
+                    peerId
+                );
+
+                remotePeers.delete(
+                    peerId
+                );
+
+                updatePeerList();
+
+                if(remotePeers.size === 0){
+
+                    rxEl.textContent =
+                        "STANDBY";
+
+                    statusEl.textContent =
+                        "MENUNGGU HT LAIN";
+
+                    updateSignal(false);
+
+                }
+
+            };
+
+
+        room.onPeerStream =
+            (stream,peerId) => {
+
+                console.log(
+                    "AUDIO DITERIMA:",
+                    peerId
+                );
+
+                addRemoteAudio(
+                    stream,
+                    peerId
+                );
+
+            };
+
+
+        statusEl.textContent =
+            "CHANNEL AKTIF • " +
+            frequencies[currentChannel];
+
+        updateSignal(false);
+
+    }catch(error){
+
+        console.error(error);
+
+        statusEl.textContent =
+            "GAGAL TERHUBUNG";
+
+    }
+
+}
+
+
+/* =========================================================
+   MICROPHONE
+   ========================================================= */
+
+async function enableMicrophone(){
+
+    if(micEnabled){
+
+        disableMicrophone();
+
+        return;
+
+    }
+
+
+    try{
+
+        statusEl.textContent =
+            "MEMINTA IZIN MICROPHONE...";
+
+
         localStream =
-            await navigator.mediaDevices
-            .getUserMedia({
+            await navigator.mediaDevices.getUserMedia({
 
                 audio:{
                     echoCancellation:true,
@@ -588,242 +783,166 @@ async function enableMic(){
 
 
         /*
-         * Mic langsung dalam kondisi OFF.
-         * Baru ON ketika PTT aktif.
-         */
+           Awalnya microphone OFF.
+           PTT yang akan mengaktifkannya.
+        */
 
         localStream
-        .getAudioTracks()
-        .forEach(
-            track=>{
+            .getAudioTracks()
+            .forEach(track=>{
                 track.enabled = false;
-            }
+            });
+
+
+        micEnabled = true;
+
+
+        ptt.disabled = false;
+
+
+        micButton.textContent =
+            "🔴 MATIKAN MICROPHONE";
+
+        micButton.classList.add(
+            "red"
         );
 
 
-        micAllowed = true;
+        statusEl.textContent =
+            "MICROPHONE SIAP";
 
 
-        document
-        .getElementById("micButton")
-        .textContent =
-            "🎙️ MICROPHONE AKTIF";
+        /*
+          Kirim stream audio ke room.
+        */
 
-        document
-        .getElementById("micButton")
-        .classList.add(
-            "micOn"
-        );
+        if(room){
 
-        document
-        .getElementById("micStatus")
-        .textContent =
-            "MICROPHONE SIAP • PTT AKAN MENGIRIM SUARA";
+            room.addStream(
+                localStream
+            );
 
-        document
-        .getElementById("micStatus")
-        .style.color =
-            "#00e676";
+        }
 
+    }catch(error){
 
-        document
-        .getElementById("ptt")
-        .disabled = false;
+        console.error(error);
 
-
-        setStatus(
-            "MIC AKTIF • PILIH CHANNEL",
-            "#00e676"
-        );
-
-        beep(1200,.08);
-
-        return true;
-
-    }catch(err){
-
-        console.error(err);
-
-        micAllowed = false;
-
-        document
-        .getElementById("micStatus")
-        .textContent =
-            "IZIN MICROPHONE DITOLAK / GAGAL";
-
-        document
-        .getElementById("micStatus")
-        .style.color =
-            "#ff5252";
-
+        statusEl.textContent =
+            "IZIN MICROPHONE DITOLAK";
 
         alert(
-            "Microphone tidak bisa digunakan.\n\n"+
-            "Pastikan izin microphone untuk browser sudah diizinkan."
+            "Microphone tidak diizinkan.\n\n" +
+            "Tekan tombol IZINKAN MICROPHONE " +
+            "lalu izinkan microphone pada browser."
         );
-
-        return false;
 
     }
 
 }
 
 
-/* =====================================================
-   TOGGLE MIC
-===================================================== */
+/* =========================================================
+   MATIKAN MICROPHONE
+   ========================================================= */
 
-async function toggleMic(){
+function disableMicrophone(){
 
-    if(!micAllowed){
-
-        await enableMic();
-
-        return;
-
-    }
-
-
-    /*
-     * Tombol kedua kali:
-     * matikan mic / izin sesi.
-     */
-
-    if(transmitting){
-
-        stopPTT();
-
-    }
+    stopTransmit();
 
 
     if(localStream){
 
         localStream
-        .getAudioTracks()
-        .forEach(
-            track=>{
-                track.enabled = false;
-            }
-        );
+            .getTracks()
+            .forEach(track=>{
+                track.stop();
+            });
 
     }
 
 
-    micAllowed = false;
+    localStream = null;
 
+    micEnabled = false;
 
-    document
-    .getElementById("ptt")
-    .disabled = true;
+    ptt.disabled = true;
 
-
-    document
-    .getElementById("micButton")
-    .textContent =
+    micButton.textContent =
         "🎙️ IZINKAN MICROPHONE";
 
-    document
-    .getElementById("micButton")
-    .classList.remove(
-        "micOn"
+    micButton.classList.remove(
+        "red"
     );
 
 
-    document
-    .getElementById("micStatus")
-    .textContent =
-        "MICROPHONE DIMATIKAN";
-
-    document
-    .getElementById("micStatus")
-    .style.color =
-        "#90a4ae";
+    rxEl.textContent =
+        "STANDBY";
 
 
-    setStatus(
-        "MIC OFF",
-        "#90a4ae"
-    );
+    statusEl.textContent =
+        "MICROPHONE OFF";
 
 }
 
 
-/* =====================================================
-   PTT ON
-===================================================== */
+/* =========================================================
+   MULAI TRANSMIT
+   ========================================================= */
 
-function startPTT(){
+function startTransmit(){
 
-    if(!micAllowed)
+    if(!micEnabled || !localStream){
+
         return;
 
-    if(transmitting)
+    }
+
+
+    if(transmitting){
+
         return;
+
+    }
 
 
     transmitting = true;
 
 
-    if(localStream){
-
-        localStream
+    localStream
         .getAudioTracks()
-        .forEach(
-            track=>{
-                track.enabled = true;
-            }
-        );
-
-    }
+        .forEach(track=>{
+            track.enabled = true;
+        });
 
 
-    const ptt =
-        document.getElementById("ptt");
-
-    ptt.classList.add("tx");
-
-
-    document
-    .getElementById("rx")
-    .textContent =
-        "TX";
-
-
-    document
-    .getElementById("rx")
-    .style.color =
-        "#ff1744";
-
-
-    setStatus(
-        "🔴 TX • "+
-        frequencies[channel-1]+
-        " MHz",
-        "#ff1744"
+    ptt.classList.add(
+        "tx"
     );
 
 
-    beep(750,.055);
+    rxEl.textContent =
+        "TX • BERBICARA";
 
-    setTimeout(
-        ()=>{
-            beep(1250,.045);
-        },
-        65
+    rxEl.classList.add(
+        "txStatus"
     );
+
+
+    statusEl.textContent =
+        "TRANSMIT";
+
+
+    updateSignal(true);
 
 }
 
 
-/* =====================================================
-   PTT OFF
-===================================================== */
+/* =========================================================
+   STOP TRANSMIT
+   ========================================================= */
 
-function stopPTT(){
-
-    if(!transmitting)
-        return;
-
+function stopTransmit(){
 
     transmitting = false;
 
@@ -831,219 +950,135 @@ function stopPTT(){
     if(localStream){
 
         localStream
-        .getAudioTracks()
-        .forEach(
-            track=>{
+            .getAudioTracks()
+            .forEach(track=>{
                 track.enabled = false;
-            }
-        );
+            });
 
     }
 
 
-    const ptt =
-        document.getElementById("ptt");
-
-    ptt.classList.remove("tx");
-
-
-    document
-    .getElementById("rx")
-    .textContent =
-        "STANDBY";
-
-
-    document
-    .getElementById("rx")
-    .style.color =
-        "#69f0ae";
-
-
-    document
-    .getElementById("count")
-    .textContent =
-        "";
-
-
-    setStatus(
-        "STANDBY • CH-"+
-        String(channel).padStart(2,"0"),
-        "#90a4ae"
+    ptt.classList.remove(
+        "tx"
     );
 
 
-    beep(1100,.055);
+    rxEl.classList.remove(
+        "txStatus"
+    );
 
-    setTimeout(
-        ()=>{
-            beep(750,.08);
-        },
-        70
+
+    rxEl.textContent =
+        "STANDBY";
+
+
+    if(micEnabled){
+
+        statusEl.textContent =
+            remotePeers.size
+            ? "CHANNEL AKTIF"
+            : "MENUNGGU HT LAIN";
+
+    }
+
+
+    updateSignal(
+        remotePeers.size > 0
     );
 
 }
 
 
-/* =====================================================
-   HOLD MODE
-===================================================== */
+/* =========================================================
+   QUICK CLICK
+   ========================================================= */
+
+function quickClick(){
+
+    if(!micEnabled){
+
+        return;
+
+    }
+
+
+    /*
+       Klik biasa = toggle.
+    */
+
+    if(transmitting){
+
+        stopTransmit();
+
+    }else{
+
+        startTransmit();
+
+    }
+
+}
+
+
+/* =========================================================
+   LONG PRESS
+   ========================================================= */
 
 function startHoldMode(){
 
-    if(!micAllowed)
+    if(!micEnabled){
+
         return;
+
+    }
 
 
     holdMode = true;
 
-    startPTT();
+    startTransmit();
 
 
-    let seconds = 5;
+    let remaining = 5;
 
 
-    document
-    .getElementById("count")
-    .textContent =
-        "AUTO OFF " + seconds;
+    rxEl.textContent =
+        "TX • " +
+        remaining +
+        " DETIK";
 
 
-    countdownTimer =
-        setInterval(
-            ()=>{
+    fiveSecondTimer =
+        setInterval(()=>{
 
-                seconds--;
-
-
-                if(seconds <= 0){
-
-                    clearInterval(
-                        countdownTimer
-                    );
-
-                    countdownTimer =
-                        null;
-
-                    holdMode = false;
-
-                    document
-                    .getElementById("count")
-                    .textContent =
-                        "";
-
-                    stopPTT();
-
-                    return;
-
-                }
+            remaining--;
 
 
-                document
-                .getElementById("count")
-                .textContent =
-                    "AUTO OFF " +
-                    seconds;
+            if(remaining > 0){
 
-            },
-            1000
-        );
+                rxEl.textContent =
+                    "TX • " +
+                    remaining +
+                    " DETIK";
 
+            }
 
-    autoOffTimer =
-        setTimeout(
-            ()=>{
+        },1000);
 
-                holdMode = false;
-
-                document
-                .getElementById("count")
-                .textContent =
-                    "";
-
-                stopPTT();
-
-            },
-            5000
-        );
-
-}
-
-
-/* =====================================================
-   PTT DOWN
-===================================================== */
-
-function pttDown(e){
-
-    e.preventDefault();
-
-
-    if(!micAllowed)
-        return;
-
-
-    if(pointerDown)
-        return;
-
-
-    pointerDown = true;
-
-
-    initAudio();
-
-
-    if(
-        audioCtx &&
-        audioCtx.state === "suspended"
-    ){
-
-        audioCtx.resume();
-
-    }
-
-
-    /*
-     * 400ms:
-     * sebelum 400ms = klik biasa
-     * setelah 400ms = tekan lama
-     */
 
     holdTimer =
-        setTimeout(
-            ()=>{
+        setTimeout(()=>{
 
-                if(pointerDown){
+            stopHoldMode();
 
-                    startHoldMode();
-
-                }
-
-            },
-            400
-        );
+        },5000);
 
 }
 
 
-/* =====================================================
-   PTT UP
-===================================================== */
+/* =========================================================
+   STOP LONG PRESS
+   ========================================================= */
 
-function pttUp(e){
-
-    e.preventDefault();
-
-
-    if(!pointerDown)
-        return;
-
-
-    pointerDown = false;
-
-
-    /*
-     * KLIK BIASA
-     */
+function stopHoldMode(){
 
     if(holdTimer){
 
@@ -1053,25 +1088,113 @@ function pttUp(e){
 
         holdTimer = null;
 
+    }
 
-        if(!holdMode){
 
-            /*
-             * OFF -> ON
-             * ON -> OFF
-             */
+    if(fiveSecondTimer){
 
-            if(transmitting){
+        clearInterval(
+            fiveSecondTimer
+        );
 
-                stopPTT();
+        fiveSecondTimer = null;
 
-            }else{
+    }
 
-                startPTT();
 
-            }
+    holdMode = false;
+
+
+    stopTransmit();
+
+}
+
+
+/* =========================================================
+   PTT POINTER DOWN
+   ========================================================= */
+
+ptt.addEventListener(
+    "pointerdown",
+    event => {
+
+        if(ptt.disabled){
+
+            return;
 
         }
+
+
+        event.preventDefault();
+
+
+        pointerIsDown = true;
+
+        pressStarted =
+            Date.now();
+
+
+        /*
+          Tunggu 400ms.
+          Kalau masih ditekan = LONG PRESS.
+        */
+
+        holdTimer =
+            setTimeout(()=>{
+
+                if(pointerIsDown){
+
+                    if(holdTimer){
+
+                        clearTimeout(
+                            holdTimer
+                        );
+
+                        holdTimer = null;
+
+                    }
+
+                    startHoldMode();
+
+                }
+
+            },400);
+
+    }
+);
+
+
+/* =========================================================
+   PTT POINTER UP
+   ========================================================= */
+
+function handlePointerUp(event){
+
+    if(!pointerIsDown){
+
+        return;
+
+    }
+
+
+    event.preventDefault();
+
+
+    pointerIsDown = false;
+
+
+    const duration =
+        Date.now() - pressStarted;
+
+
+    /*
+      Kalau sudah masuk long press:
+      release = OFF.
+    */
+
+    if(holdMode){
+
+        stopHoldMode();
 
         return;
 
@@ -1079,124 +1202,244 @@ function pttUp(e){
 
 
     /*
-     * MODE TEKAN LAMA
-     */
+      Batalkan timer long press.
+    */
 
-    if(holdMode){
+    if(holdTimer){
 
-        holdMode = false;
+        clearTimeout(
+            holdTimer
+        );
 
+        holdTimer = null;
 
-        if(autoOffTimer){
-
-            clearTimeout(
-                autoOffTimer
-            );
-
-            autoOffTimer = null;
-
-        }
+    }
 
 
-        if(countdownTimer){
+    /*
+      Kurang dari 400ms = quick click.
+    */
 
-            clearInterval(
-                countdownTimer
-            );
+    if(duration < 400){
 
-            countdownTimer = null;
-
-        }
-
-
-        document
-        .getElementById("count")
-        .textContent =
-            "";
-
-
-        stopPTT();
+        quickClick();
 
     }
 
 }
 
 
-/* =====================================================
-   PTT EVENT
-===================================================== */
-
-const ptt =
-    document.getElementById("ptt");
-
-
-ptt.addEventListener(
-    "pointerdown",
-    pttDown
-);
-
 ptt.addEventListener(
     "pointerup",
-    pttUp
+    handlePointerUp
 );
 
 ptt.addEventListener(
     "pointercancel",
-    pttUp
+    handlePointerUp
 );
 
 ptt.addEventListener(
-    "contextmenu",
-    e=>e.preventDefault()
+    "pointerleave",
+    event => {
+
+        /*
+          Jangan langsung mematikan
+          mode toggle hanya karena jari
+          keluar sedikit dari tombol.
+
+          Tetapi long press akan OFF
+          jika pointer dilepas/cancel.
+        */
+
+        if(
+            pointerIsDown &&
+            holdMode
+        ){
+
+            handlePointerUp(event);
+
+        }
+
+    }
 );
 
 
-/* =====================================================
-   CHANNEL BUTTONS
-===================================================== */
+/* =========================================================
+   REMOTE AUDIO
+   ========================================================= */
 
-function createChannelButtons(){
+function addRemoteAudio(
+    stream,
+    peerId
+){
 
-    const box =
-        document.getElementById(
-            "channelList"
+    removeAudio(
+        peerId
+    );
+
+
+    const audio =
+        document.createElement("audio");
+
+
+    audio.className =
+        "remoteAudio";
+
+    audio.id =
+        "audio-" + peerId;
+
+    audio.autoplay = true;
+
+    audio.playsInline = true;
+
+    audio.srcObject =
+        stream;
+
+
+    audioContainer.appendChild(
+        audio
+    );
+
+
+    remotePeers.set(
+        peerId,
+        audio
+    );
+
+
+    audio.play()
+        .catch(error=>{
+            console.log(
+                "Autoplay menunggu interaksi:",
+                error
+            );
+        });
+
+
+    rxEl.textContent =
+        "RX • HT TERHUBUNG";
+
+
+    rxEl.classList.remove(
+        "txStatus"
+    );
+
+
+    statusEl.textContent =
+        "TERHUBUNG • " +
+        remotePeers.size +
+        " HT";
+
+
+    updateSignal(true);
+
+    updatePeerList();
+
+}
+
+
+/* =========================================================
+   HAPUS AUDIO
+   ========================================================= */
+
+function removeAudio(
+    peerId
+){
+
+    const audio =
+        remotePeers.get(
+            peerId
         );
 
 
-    frequencies.forEach(
-        (frequency,index)=>{
+    if(audio){
 
-            const btn =
-                document.createElement(
-                    "button"
+        audio.srcObject = null;
+
+        audio.remove();
+
+    }
+
+
+    remotePeers.delete(
+        peerId
+    );
+
+}
+
+
+/* =========================================================
+   HAPUS SEMUA AUDIO
+   ========================================================= */
+
+function removeAllAudio(){
+
+    remotePeers.forEach(
+        audio=>{
+
+            audio.srcObject = null;
+
+            audio.remove();
+
+        }
+    );
+
+
+    remotePeers.clear();
+
+}
+
+
+/* =========================================================
+   PEER LIST
+   ========================================================= */
+
+function updatePeerList(){
+
+    const count =
+        remotePeers.size;
+
+
+    if(count === 0){
+
+        peerListEl.textContent =
+            "BELUM ADA HT LAIN";
+
+        return;
+
+    }
+
+
+    peerListEl.textContent =
+        count +
+        " HT TERHUBUNG DI CHANNEL INI";
+
+}
+
+
+/* =========================================================
+   SIGNAL
+   ========================================================= */
+
+function updateSignal(active){
+
+    signalBars.forEach(
+        (bar,index)=>{
+
+            if(active){
+
+                bar.classList.add(
+                    "on"
                 );
 
+            }else{
 
-            btn.className =
-                "channelBtn";
+                bar.classList.remove(
+                    "on"
+                );
 
-
-            btn.innerHTML =
-                "CH-"+
-                String(index+1)
-                .padStart(2,"0")+
-                "<br>"+
-                frequency+
-                " MHz";
-
-
-            btn.onclick =
-                ()=>{
-
-                    channel =
-                        index+1;
-
-                    updateChannel();
-
-                };
-
-
-            box.appendChild(btn);
+            }
 
         }
     );
@@ -1204,142 +1447,128 @@ function createChannelButtons(){
 }
 
 
-/* =====================================================
-   UPDATE CHANNEL
-===================================================== */
+/* =========================================================
+   GANTI CHANNEL
+   ========================================================= */
 
-function updateChannel(){
+async function changeChannel(
+    index
+){
 
-    document
-    .getElementById("channel")
-    .textContent =
-        "CH-"+
-        String(channel)
-        .padStart(2,"0");
+    if(index < 0){
 
+        index =
+            frequencies.length - 1;
 
-    document
-    .getElementById("freq")
-    .textContent =
-        frequencies[channel-1];
+    }
 
-
-    document
-    .querySelectorAll(".channelBtn")
-    .forEach(
-        (btn,index)=>{
-
-            btn.classList.toggle(
-                "active",
-                index === channel-1
-            );
-
-        }
-    );
-
-
-    signalRandom();
-
-
-    setStatus(
-        "CH-"+
-        String(channel).padStart(2,"0")+
-        " • "+
-        frequencies[channel-1]+
-        " MHz"
-    );
-
-}
-
-
-/* =====================================================
-   NEXT / PREVIOUS
-===================================================== */
-
-function nextChannel(){
-
-    channel++;
 
     if(
-        channel >
-        frequencies.length
+        index >= frequencies.length
     ){
 
-        channel = 1;
+        index = 0;
 
     }
 
-    beep(900,.04);
 
-    updateChannel();
+    /*
+      Matikan TX sebelum pindah.
+    */
+
+    stopTransmit();
+
+
+    currentChannel =
+        index;
+
+
+    updateDisplay();
+
+
+    await joinCurrentChannel();
 
 }
 
 
-function previousChannel(){
+/* =========================================================
+   CHANNEL -
+   ========================================================= */
 
-    channel--;
+window.previousChannel =
+    function(){
 
-    if(channel < 1){
-
-        channel =
-            frequencies.length;
-
-    }
-
-    beep(650,.04);
-
-    updateChannel();
-
-}
-
-
-/* =====================================================
-   SIGNAL
-===================================================== */
-
-function signalRandom(){
-
-    const bars =
-        document
-        .getElementById("signal")
-        .children;
-
-
-    const level =
-        Math.floor(
-            Math.random()*6
-        )+2;
-
-
-    for(
-        let i=0;
-        i<bars.length;
-        i++
-    ){
-
-        bars[i]
-        .classList
-        .toggle(
-            "on",
-            i < level
+        changeChannel(
+            currentChannel - 1
         );
 
-    }
-
-}
+    };
 
 
-/* =====================================================
-   INIT
-===================================================== */
+/* =========================================================
+   CHANNEL +
+   ========================================================= */
+
+window.nextChannel =
+    function(){
+
+        changeChannel(
+            currentChannel + 1
+        );
+
+    };
+
+
+/* =========================================================
+   MICROPHONE BUTTON
+   ========================================================= */
+
+micButton.addEventListener(
+    "click",
+    enableMicrophone
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
 
 createChannelButtons();
 
-updateChannel();
+updateDisplay();
 
-setStatus(
-    "AKTIFKAN MICROPHONE"
+joinCurrentChannel();
+
+
+/* =========================================================
+   PAGE CLOSE
+   ========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    ()=>{
+
+        try{
+
+            if(room){
+
+                room.leave();
+
+            }
+
+        }catch(e){}
+
+        if(localStream){
+
+            localStream
+                .getTracks()
+                .forEach(track=>{
+                    track.stop();
+                });
+
+        }
+
+    }
 );
 
 </script>
